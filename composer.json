@@ -1,0 +1,18 @@
+{
+    "name": "nekrosb/php-blog-nekrosb",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Nekrosb\\PhpBlogNekrosb\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "nekrosb",
+            "email": "makarov.nikita.mn@gmail.com"
+        }
+    ],
+    "require-dev": {
+        "laravel/pint": "^1.27"
+    }
+}
