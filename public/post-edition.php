@@ -7,9 +7,7 @@
     <link rel="stylesheet" href="css/style.css">
     <title>edition post</title>
 </head>
-<header>
-    <h1>edition post</h1>
-</header>
+<?php include "header.php"; ?>
 
 <div class="menu-container">
     <form action="" method="post">

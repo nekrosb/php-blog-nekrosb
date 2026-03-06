@@ -84,7 +84,8 @@ li {
 
 /* ===== BUTTONS ===== */
 
-button {
+button,
+a {
 
     background:
         linear-gradient(to bottom, #ffffff, #e5e5e5);

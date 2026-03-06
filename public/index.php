@@ -9,17 +9,9 @@
 </head>
 
 <body>
-    <header>
-        <h1>Home page</h1>
 
-        <nav>
-            <ul>
-                <li><button class="log-in">Log In</button></li>
-                <li><button class="register">Register</button></li>
-                <li><button class="btn-create-post" aria-label="create new post">+</button></li>
-            </ul>
-        </nav>
-    </header>
+    <?php include 'header.php'; ?>
+
 
     <div class="post-container">
         <div class="post">

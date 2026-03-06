@@ -9,13 +9,7 @@
 </head>
 
 <body>
-    <header>
-        <nav>
-            <ul>
-                <li>go to home</li>
-            </ul>
-        </nav>
-    </header>
+    <?php include "header.php"; ?>
 
     <div class="post-container">
         <div class="post">

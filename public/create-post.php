@@ -9,10 +9,7 @@
 </head>
 
 <body>
-    <header>
-        <h1>create post</h1>
-    </header>
-
+    <?php include "header.php"; ?>
     <div class="menu-container">
         <form action="" method="POST">
             <label for="title">Title:</label>
@@ -20,7 +17,8 @@
 
             <label for="content">Content:</label>
             <textarea id="content" name="content" required></textarea>
-
+            <label for="apload-file">apload your file</label>
+            <input type="file" id="apload-file" nameapload-f>
             <button type="submit">Create Post</button>
             <button type="reset">Reset</button>
         </form>

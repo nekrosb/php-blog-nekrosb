@@ -9,9 +9,8 @@
 </head>
 
 <body>
-    <header>
-        <h1>log-in</h1>
-    </header>
+
+    <?php include 'header.php'; ?>
 
     <div class="menu-container">
         <form action="" method="POST">
