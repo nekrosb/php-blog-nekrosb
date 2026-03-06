@@ -17,11 +17,11 @@
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required>
 
-            <label for="email">Email:</label>
+            <label for="e-mail">Email:</label>
             <input type="email" id="e-mail" name="e-mail" required>
 
             <label for="password">Password:</label>
-            <input type="create-password" id="password" name="password" required>
+            <input type="password" id="password" name="password" required>
 
             <button type="submit">Register</button>
             <button type="button" aria-label="cancel registration">Cancel</button>

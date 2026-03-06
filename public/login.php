@@ -16,7 +16,7 @@
     <div class="menu-container">
         <form action="" method="POST">
             <label for="email">email:</label>
-            <input type="text" id="email" name="email" required>
+            <input type="email" id="email" name="email" required>
 
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
