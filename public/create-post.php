@@ -1,6 +1,9 @@
 <?php
 require __DIR__ . "/../src/classes/apload-and-load-filed.php";
 require __DIR__ . "/../src/classes/working-whith-db.php";
+require "../src/classes/working-whith-db.php";
+$db = Database::getInstance();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $titleF = filter_input(INPUT_POST, 'title');
     $title = trim($titleF);
@@ -23,8 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    createDB();
-    createPost($title, $content, $path);
+
+    $db->createPost($title, $content, $path);
 
     header("Location: /");
     exit();

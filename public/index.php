@@ -1,3 +1,10 @@
+<?php
+require "../src/classes/working-whith-db.php";
+$db = Database::getInstance();
+$db->ensureDBExists()
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
