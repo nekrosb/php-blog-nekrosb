@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/style.css">
-    <title>edition post</title>
+    <title>edit post</title>
 </head>
 <?php include "header.php"; ?>
 
@@ -18,7 +18,7 @@
         <textarea id="content" name="content" required></textarea>
 
         <button type="submit">Save</button>
-        <button type="button" aria-label="cancel edition">Cancel</button>
+        <button type="button" aria-label="cancel editing">Cancel</button>
     </form>
 </div>
 
