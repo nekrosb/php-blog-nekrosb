@@ -2,69 +2,79 @@
 
 class File
 {
+    private finfo $finfo;
+    private array $allowedMimeTypes;
+    private int $maxFileSize;
+    private string $uploadDir;
+    private array $extensions;
 
-    public function fileCheck(array $file): void
+    public function __construct()
     {
-        if ($file['image']['error'] !== UPLOAD_ERR_OK) {
-            throw new Exception("upload error");
-        }
+        $this->finfo = new finfo(FILEINFO_MIME_TYPE);
 
-        if ($file['image']['size'] > 5 * 1024 * 1024) {
-            throw new Exception("file too large");
-        }
 
-        $finfo = new finfo(FILEINFO_MIME_TYPE);
-        $mime = $finfo->file($file['image']['tmp_name']);
-
-        $allowed = [
+        $this->allowedMimeTypes = [
             'image/jpeg',
             'image/png',
             'image/gif'
         ];
 
-        if (!in_array($mime, $allowed)) {
-            throw new Exception("invalid file type");
-        }
 
-        if (getimagesize($file['image']['tmp_name']) === false) {
-            throw new Exception("not a valid image");
-        }
-    }
-
-    public function uploadFile(array $file): string
-    {
-        $targetDir = __DIR__ . '/../../public/uploads/';
-        if (!is_dir($targetDir)) {
-            mkdir($targetDir, 0755, true);
-        }
+        $this->maxFileSize = 5 * 1024 * 1024;
 
 
-        $finfo = new finfo(FILEINFO_MIME_TYPE);
-        $mime = $finfo->file($file['image']['tmp_name']);
+        $this->uploadDir = __DIR__ . '/../../public/uploads/';
 
-        $extensions = [
+
+        $this->extensions = [
             'image/jpeg' => 'jpg',
             'image/png'  => 'png',
             'image/gif'  => 'gif',
         ];
 
-        if (!isset($extensions[$mime])) {
+
+        if (!is_dir($this->uploadDir)) {
+            mkdir($this->uploadDir, 0755, true);
+        }
+    }
+
+    public function fileCheck(array $file): void
+    {
+        if ($file['image']['error'] !== UPLOAD_ERR_OK) {
+            throw new Exception("Upload error");
+        }
+
+        if ($file['image']['size'] > $this->maxFileSize) {
+            throw new Exception("File too large");
+        }
+
+        $mime = $this->finfo->file($file['image']['tmp_name']);
+
+        if (!in_array($mime, $this->allowedMimeTypes)) {
             throw new Exception("Invalid file type");
         }
 
-        $ext = $extensions[$mime];
+        if (getimagesize($file['image']['tmp_name']) === false) {
+            throw new Exception("Not a valid image");
+        }
+    }
 
+    public function uploadFile(array $file): string
+    {
+        $mime = $this->finfo->file($file['image']['tmp_name']);
 
+        if (!isset($this->extensions[$mime])) {
+            throw new Exception("Invalid file type");
+        }
+
+        $ext = $this->extensions[$mime];
         $name = bin2hex(random_bytes(16)) . '.' . $ext;
-
-        $filePath = $targetDir . $name;
-
-
+        $filePath = $this->uploadDir . $name;
 
         if (move_uploaded_file($file['image']['tmp_name'], $filePath)) {
             return "uploads/" . $name;
         } else {
-            throw new Exception("failed to upload file");
+            throw new Exception("Failed to upload file");
         }
     }
 }

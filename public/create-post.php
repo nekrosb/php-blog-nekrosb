@@ -2,6 +2,7 @@
 require __DIR__ . "/../src/classes/apload-and-load-filed.php";
 require __DIR__ . "/../src/classes/working-whith-db.php";
 $db = Database::getInstance();
+$db->ensureDBExists();
 
 if (isset($_GET['error'])) {
     echo htmlspecialchars($_GET['error']);
