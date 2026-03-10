@@ -1,11 +1,12 @@
 <?php
+session_start();
 require __DIR__ . "/../src/classes/apload-and-load-filed.php";
 require __DIR__ . "/../src/classes/working-whith-db.php";
 $db = Database::getInstance();
-$db->ensureDBExists();
 
-if (isset($_GET['error'])) {
-    echo htmlspecialchars($_GET['error']);
+if (isset($_SESSION["flash_error"])) {
+    echo $_SESSION["flash_error"];
+    unset($_SESSION["flash_error"]);
 }
 
 
@@ -17,7 +18,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $path = null;
 
     if (empty($title) || empty($content)) {
-        header("location: /create-post.php?error=" . urlencode("title and content are required"));
+        $_SESSION["flash_error"] = "title and content are required";
+        header("location: /create-post.php");
         exit();
     }
 
@@ -27,7 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $files->fileCheck($_FILES);
             $path = $files->uploadFile($_FILES);
         } catch (Exception $e) {
-            header("location: /create-post.php?error=" . urlencode($e->getMessage()));
+            $_SESSION["flash_error"] = $e->getMessage();
+            header("location: /create-post.php");
             exit();
         }
     }

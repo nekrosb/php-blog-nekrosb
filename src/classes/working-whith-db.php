@@ -21,6 +21,7 @@ class Database
     {
         if (self::$instance === null) {
             self::$instance = new Database();
+            self::$instance->ensureDBExists();
         }
 
         return self::$instance;
