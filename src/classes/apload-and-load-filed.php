@@ -3,8 +3,7 @@
 class File
 {
 
-
-    public static function fileCheck(array $file): void
+    public function fileCheck(array $file): void
     {
         if ($file['image']['error'] !== UPLOAD_ERR_OK) {
             throw new Exception("upload error");
@@ -38,10 +37,31 @@ class File
         if (!is_dir($targetDir)) {
             mkdir($targetDir, 0755, true);
         }
-        $name = uniqid() . '_' . basename($file['image']['name']);
-        $filePath = $targetDir . $name;
-        if (move_uploaded_file($file['image']['tmp_name'], $filePath)) {
 
+
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $mime = $finfo->file($file['image']['tmp_name']);
+
+        $extensions = [
+            'image/jpeg' => 'jpg',
+            'image/png'  => 'png',
+            'image/gif'  => 'gif',
+        ];
+
+        if (!isset($extensions[$mime])) {
+            throw new Exception("Invalid file type");
+        }
+
+        $ext = $extensions[$mime];
+
+
+        $name = bin2hex(random_bytes(16)) . '.' . $ext;
+
+        $filePath = $targetDir . $name;
+
+
+
+        if (move_uploaded_file($file['image']['tmp_name'], $filePath)) {
             return "uploads/" . $name;
         } else {
             throw new Exception("failed to upload file");

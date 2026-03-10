@@ -1,6 +1,6 @@
 <?php
 require __DIR__ . "/../src/classes/apload-and-load-filed.php";
-require "../src/classes/working-whith-db.php";
+require __DIR__ . "/../src/classes/working-whith-db.php";
 $db = Database::getInstance();
 
 if (isset($_GET['error'])) {
