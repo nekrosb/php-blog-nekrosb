@@ -1,8 +1,12 @@
 <?php
 require __DIR__ . "/../src/classes/apload-and-load-filed.php";
-require __DIR__ . "/../src/classes/working-whith-db.php";
 require "../src/classes/working-whith-db.php";
 $db = Database::getInstance();
+
+if (isset($_GET['error'])) {
+    echo htmlspecialchars($_GET['error']);
+}
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $titleF = filter_input(INPUT_POST, 'title');
@@ -12,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $path = null;
 
     if (empty($title) || empty($content)) {
-        header("location: /create-post.php");
+        header("location: /create-post.php?error=" . urlencode("title and content are required"));
         exit();
     }
 
@@ -22,6 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $files->fileCheck($_FILES);
             $path = $files->uploadFile($_FILES);
         } catch (Exception $e) {
+            header("location: /create-post.php?error=" . urlencode($e->getMessage()));
             exit();
         }
     }

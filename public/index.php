@@ -1,7 +1,7 @@
 <?php
 require "../src/classes/working-whith-db.php";
 $db = Database::getInstance();
-$db->ensureDBExists()
+$db->ensureDBExists();
 
 ?>
 

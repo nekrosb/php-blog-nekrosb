@@ -13,7 +13,7 @@ class Database
             $this->pdo = new PDO("sqlite:" . $dbPath);
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
-            die("Connection failed: " . $e->getMessage());
+            throw new Exception("Failed to connect to the database: " . $e->getMessage());
         }
     }
 

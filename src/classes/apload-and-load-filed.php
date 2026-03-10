@@ -34,15 +34,15 @@ class File
 
     public function uploadFile(array $file): string
     {
-        $targetDir = __DIR__ . '/../uploads/';
+        $targetDir = __DIR__ . '/../../public/uploads/';
         if (!is_dir($targetDir)) {
-            mkdir($targetDir, 0766, true);
+            mkdir($targetDir, 0755, true);
         }
         $name = uniqid() . '_' . basename($file['image']['name']);
         $filePath = $targetDir . $name;
         if (move_uploaded_file($file['image']['tmp_name'], $filePath)) {
 
-            return $filePath;
+            return "uploads/" . $name;
         } else {
             throw new Exception("failed to upload file");
         }
