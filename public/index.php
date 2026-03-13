@@ -22,7 +22,7 @@ $posts = $db->getPosts();
 
 
     <div class="post-container">
-        <?php foreach ($posts as $post): ?>
+        <?php foreach ($posts as $index => $post): ?>
 
             <div class="post">
 
@@ -30,11 +30,11 @@ $posts = $db->getPosts();
 
                 <img src="<?= $post['image'] ?>" class="post-image">
 
-                <div class="content" aria-expanded="false">
-                    <?= htmlspecialchars($post['content']) ?>
+                <div class="content" id="content-<?= $index ?>">
+                    <?= nl2br(htmlspecialchars($post['content'])) ?>
                 </div>
 
-                <button class="toggle-btn" aria-expanded="false">read more</button>
+                <button class="toggle-btn" aria-expanded="false" aria-controls="content-<?= $index ?>">read more</button>
 
             </div>
 
@@ -51,7 +51,6 @@ $posts = $db->getPosts();
 
                     const isOpen = content.classList.contains("open");
                     this.setAttribute("aria-expanded", isOpen);
-                    content.setAttribute("aria-expanded", isOpen);
 
                     if (isOpen) {
                         this.textContent = "read less";
