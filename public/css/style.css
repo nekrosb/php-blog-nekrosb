@@ -188,7 +188,7 @@ a:active {
 .post {
 
     width: 100%;
-    max-width: 850px;
+    max-width: 1150px;
 
     background:
         linear-gradient(to bottom, #ffffff, #eaf2fb);
@@ -389,4 +389,19 @@ footer {
 
     }
 
+}
+
+
+
+.content {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.content.open {
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
 }
