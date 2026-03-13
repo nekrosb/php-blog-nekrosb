@@ -36,6 +36,11 @@ $posts = $db->getPosts();
 
                 <button class="toggle-btn" aria-expanded="false" aria-controls="content-<?= $index ?>">read more</button>
 
+                <form action="/post-edition.php" method="GEt">
+                    <input type="hidden" name="id" value="<?= $post['id'] ?>">
+                    <button type="submit">Edit Post</button>
+                </form>
+
             </div>
 
         <?php endforeach; ?>
