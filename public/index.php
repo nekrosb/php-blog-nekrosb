@@ -26,15 +26,15 @@ $posts = $db->getPosts();
 
             <div class="post">
 
-                <h2><?= $post['title'] ?></h2>
+                <h2><?= htmlspecialchars($post['title']) ?></h2>
 
                 <img src="<?= $post['image'] ?>" class="post-image">
 
-                <div class="content">
-                    <?= nl2br($post['content']) ?>
+                <div class="content" aria-expanded="false">
+                    <?= htmlspecialchars($post['content']) ?>
                 </div>
 
-                <button class="toggle-btn">read more</button>
+                <button class="toggle-btn" aria-expanded="false">read more</button>
 
             </div>
 
@@ -43,21 +43,25 @@ $posts = $db->getPosts();
         <script>
             document.querySelectorAll(".toggle-btn").forEach(button => {
 
-                        button.addEventListener("click", function() {
+                button.addEventListener("click", function() {
 
-                                const content = this.previousElementSibling;
+                    const content = this.parentElement.querySelector(".content");
 
-                                content.classList.toggle("open");
+                    content.classList.toggle("open");
 
-                                if (content.classList.contains("open")) {
-                                    this.textContent = "read less";
-                                } else {
-                                    this.textContent = "read more";
-                                }
+                    const isOpen = content.classList.contains("open");
+                    this.setAttribute("aria-expanded", isOpen);
+                    content.setAttribute("aria-expanded", isOpen);
 
-                            });
+                    if (isOpen) {
+                        this.textContent = "read less";
+                    } else {
+                        this.textContent = "read more";
+                    }
 
-                        });
+                });
+
+            });
         </script>
 
 
