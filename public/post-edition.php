@@ -13,12 +13,14 @@ $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 $post = null;
 $title = '';
 $content = '';
+$path;
 
 if ($id) {
     $post = $db->getPostById($id);
     if ($post) {
         $title = $post['title'];
         $content = $post['content'];
+        $path = $post['image'];
     } else {
         $_SESSION["flash_error"] = "Post not found";
         header("Location: /");
@@ -41,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($title) || empty($content)) {
         $_SESSION["flash_error"] = "title and content are required";
-        header("location: /create-post.php");
+        header("location: /post-edition.php?id=" . $id);
         exit();
     }
 
@@ -52,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $path = $files->uploadFile($_FILES);
         } catch (Exception $e) {
             $_SESSION["flash_error"] = $e->getMessage();
-            header("location: /create-post.php");
+            header("location: /post-edition.php?id=" . $id);
             exit();
         }
     }
@@ -74,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/style.css">
-    <title>create post</title>
+    <title>edit post</title>
 </head>
 
 <body>
@@ -89,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <textarea id="content" name="content" required><?= $content ?></textarea>
             <label for="upload-file">Upload your file</label>
             <input type="file" id="upload-file" name="image">
-            <button type="submit">Create Post</button>
+            <button type="submit">edit Post</button>
             <button type="reset">Reset</button>
         </form>
     </div>

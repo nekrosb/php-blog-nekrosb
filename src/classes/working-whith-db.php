@@ -96,7 +96,7 @@ class Database
     }
     public function getPostById(int $id): ?array
     {
-        $stmt = $this->pdo->prepare("SELECT id, title, content FROM posts WHERE id = :id");
+        $stmt = $this->pdo->prepare("SELECT  title, content, image FROM posts WHERE id = :id");
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
 
