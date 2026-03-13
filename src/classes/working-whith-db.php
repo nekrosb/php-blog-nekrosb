@@ -75,7 +75,32 @@ class Database
 
     public function getPosts(): array
     {
-        $stmt = $this->pdo->query("SELECT title, image, content FROM posts ORDER BY created_at DESC");
+        $stmt = $this->pdo->query("SELECT id, title, image, content FROM posts ORDER BY created_at DESC");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function updatePost(int $id, string $title, string $content, ?string $imagePath): void
+    {
+        $stmt = $this->pdo->prepare("
+            UPDATE posts
+            SET title = :title, content = :content, image = :image
+            WHERE id = :id
+        ");
+
+        $stmt->bindParam(':title', $title, PDO::PARAM_STR);
+        $stmt->bindParam(':content', $content, PDO::PARAM_STR);
+        $stmt->bindParam(':image', $imagePath, PDO::PARAM_STR);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+        $stmt->execute();
+    }
+    public function getPostById(int $id): ?array
+    {
+        $stmt = $this->pdo->prepare("SELECT id, title, content FROM posts WHERE id = :id");
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $post = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $post ?: null;
     }
 }
