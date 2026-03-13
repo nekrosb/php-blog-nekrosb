@@ -28,7 +28,8 @@ $posts = $db->getPosts();
 
                 <h2><?= htmlspecialchars($post['title']) ?></h2>
 
-                <img src="<?= $post['image'] ?>" class="post-image">
+                php if ($post['image']): ?>
+                <img src="<?= htmlspecialchars($post['image']) ?>" alt="Post Image">
 
                 <div class="content" id="content-<?= $index ?>">
                     <?= nl2br(htmlspecialchars($post['content'])) ?>
