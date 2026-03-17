@@ -44,6 +44,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (isset($_FILES["image"]) && $_FILES["image"]["error"] === UPLOAD_ERR_OK) {
         try {
+            $alderPath = $path;
+            if (file_exists($alderPath)) {
+                unlink($alderPath);
+            }
+
             $files = new File();
             $files->fileCheck($_FILES);
             $path = $files->uploadFile($_FILES);
