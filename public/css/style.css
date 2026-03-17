@@ -413,6 +413,7 @@ footer {
 
     display: -webkit-box;
     -webkit-line-clamp: 3;
+    line-clamp: 3;
     -webkit-box-orient: vertical;
 
     transition: height 0.35s ease;
@@ -420,4 +421,5 @@ footer {
 
 .content.open {
     -webkit-line-clamp: unset;
+    line-clamp: unset;
 }

@@ -1,4 +1,5 @@
 <?php
+session_start();
 require "../src/classes/working-whith-db.php";
 $db = Database::getInstance();
 $posts = $db->getPosts();
@@ -22,6 +23,7 @@ $posts = $db->getPosts();
 
 
     <div class="post-container">
+        <?php $_SESSION["flash_error"]; ?>
         <?php foreach ($posts as $index => $post): ?>
 
             <div class="post">
@@ -38,7 +40,7 @@ $posts = $db->getPosts();
 
                 <button class="toggle-btn" aria-expanded="false" aria-controls="content-<?= $index ?>">read more</button>
 
-                <form action="/post-edition.php" method="GEt">
+                <form action="/post-edition.php" method="GET">
                     <input type="hidden" name="id" value="<?= $post['id'] ?>">
                     <button type="submit">Edit Post</button>
                 </form>

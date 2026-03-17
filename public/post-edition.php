@@ -75,15 +75,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body>
-<?php $_SESSION["flash_error"];
+
     <?php include "header.php"; ?>
     <div class="menu-container">
         <form action="" method="POST" enctype="multipart/form-data">
             <label for="title">Title:</label>
-            <input type="text" id="title" name="title" required value="<?= nl2br(htmlspecialchars($title)) ?>">
+            <input type="text" id="title" name="title" required value="<?= htmlspecialchars($title) ?>">
 
             <label for="content">Content:</label>
-            <textarea id="content" name="content" required><?= nl2br(htmlspecialchars($content)) ?></textarea>
+            <textarea id="content" name="content" required><?= htmlspecialchars($content) ?></textarea>
             <label for="upload-file">Upload your file</label>
             <input type="file" id="upload-file" name="image">
             <button type="submit">edit Post</button>
