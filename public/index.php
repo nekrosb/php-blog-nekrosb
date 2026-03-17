@@ -53,14 +53,35 @@ $posts = $db->getPosts();
 
                     const content = this.parentElement.querySelector(".content");
 
-                    content.classList.toggle("open");
-
                     const isOpen = content.classList.contains("open");
-                    this.setAttribute("aria-expanded", isOpen);
 
-                    if (isOpen) {
+                    if (!isOpen) {
+
+                        const fullHeight = content.scrollHeight;
+
+                        content.style.height = content.clientHeight + "px";
+
+                        requestAnimationFrame(() => {
+                            content.style.height = fullHeight + "px";
+                        });
+
+                        content.classList.add("open");
+
                         this.textContent = "read less";
+
                     } else {
+
+
+                        const currentHeight = content.scrollHeight;
+
+                        content.style.height = currentHeight + "px";
+
+                        requestAnimationFrame(() => {
+                            content.style.height = "4.5em";
+                        });
+
+                        content.classList.remove("open");
+
                         this.textContent = "read more";
                     }
 
