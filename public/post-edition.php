@@ -8,7 +8,7 @@ $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 $post = null;
 $title = '';
 $content = '';
-$path;
+$path = null;
 
 if ($id) {
     $post = $db->getPostById($id);
@@ -80,11 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <body>
     <?php
-    if (isset($_SESSION["flash_error"])) {
-        echo htmlspecialchars($_SESSION["flash_error"]);
-        unset($_SESSION["flash_error"]);
-    }
-
+    include "fleshMsg.php";
     ?>
 
 

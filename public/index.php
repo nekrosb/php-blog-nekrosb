@@ -24,10 +24,7 @@ $posts = $db->getPosts();
 
     <div class="post-container">
         <?php
-        if (isset($_SESSION["flash_error"])) {
-            echo htmlspecialchars($_SESSION["flash_error"]);
-            unset($_SESSION["flash_error"]);
-        }
+        include "fleshMsg.php";
 
         ?>
 
@@ -79,6 +76,7 @@ $posts = $db->getPosts();
                         content.classList.add("open");
 
                         this.textContent = "read less";
+                        this.setAttribute("aria-expanded", "true");
 
                     } else {
 
@@ -94,6 +92,7 @@ $posts = $db->getPosts();
                         content.classList.remove("open");
 
                         this.textContent = "read more";
+                        this.setAttribute("aria-expanded", "false");
                     }
 
                 });
