@@ -28,8 +28,9 @@ $posts = $db->getPosts();
 
                 <h2><?= htmlspecialchars($post['title']) ?></h2>
 
-                php if ($post['image']): ?>
-                <img src="<?= htmlspecialchars($post['image']) ?>" alt="Post Image">
+                <?php if ($post['image']): ?>
+                    <img src="<?= htmlspecialchars($post['image']) ?>" alt="Post Image">
+                <?php endif; ?>
 
                 <div class="content" id="content-<?= $index ?>">
                     <?= nl2br(htmlspecialchars($post['content'])) ?>
@@ -45,6 +46,7 @@ $posts = $db->getPosts();
             </div>
 
         <?php endforeach; ?>
+
 
         <script>
             document.querySelectorAll(".toggle-btn").forEach(button => {
