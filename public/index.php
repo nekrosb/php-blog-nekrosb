@@ -1,4 +1,5 @@
 <?php
+session_start();
 require "../src/classes/working-whith-db.php";
 $db = Database::getInstance();
 $posts = $db->getPosts();
@@ -22,13 +23,20 @@ $posts = $db->getPosts();
 
 
     <div class="post-container">
+        <?php
+        include "fleshMsg.php";
+
+        ?>
+
         <?php foreach ($posts as $index => $post): ?>
 
             <div class="post">
 
                 <h2><?= htmlspecialchars($post['title']) ?></h2>
 
-                <img src="<?= $post['image'] ?>" class="post-image">
+                <?php if ($post['image']): ?>
+                    <img src="<?= htmlspecialchars($post['image']) ?>" alt="Post Image">
+                <?php endif; ?>
 
                 <div class="content" id="content-<?= $index ?>">
                     <?= nl2br(htmlspecialchars($post['content'])) ?>
@@ -36,9 +44,15 @@ $posts = $db->getPosts();
 
                 <button class="toggle-btn" aria-expanded="false" aria-controls="content-<?= $index ?>">read more</button>
 
+                <form action="/post-edition.php" method="GET">
+                    <input type="hidden" name="id" value="<?= $post['id'] ?>">
+                    <button type="submit">Edit Post</button>
+                </form>
+
             </div>
 
         <?php endforeach; ?>
+
 
         <script>
             document.querySelectorAll(".toggle-btn").forEach(button => {
@@ -47,15 +61,38 @@ $posts = $db->getPosts();
 
                     const content = this.parentElement.querySelector(".content");
 
-                    content.classList.toggle("open");
-
                     const isOpen = content.classList.contains("open");
-                    this.setAttribute("aria-expanded", isOpen);
 
-                    if (isOpen) {
+                    if (!isOpen) {
+
+                        const fullHeight = content.scrollHeight;
+
+                        content.style.height = content.clientHeight + "px";
+
+                        requestAnimationFrame(() => {
+                            content.style.height = fullHeight + "px";
+                        });
+
+                        content.classList.add("open");
+
                         this.textContent = "read less";
+                        this.setAttribute("aria-expanded", "true");
+
                     } else {
+
+
+                        const currentHeight = content.scrollHeight;
+
+                        content.style.height = currentHeight + "px";
+
+                        requestAnimationFrame(() => {
+                            content.style.height = "4.5em";
+                        });
+
+                        content.classList.remove("open");
+
                         this.textContent = "read more";
+                        this.setAttribute("aria-expanded", "false");
                     }
 
                 });

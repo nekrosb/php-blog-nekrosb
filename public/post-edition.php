@@ -1,3 +1,73 @@
+<?php
+session_start();
+require __DIR__ . "/../src/classes/apload-and-load-filed.php";
+require __DIR__ . "/../src/classes/working-whith-db.php";
+$db = Database::getInstance();
+
+$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+$post = null;
+$title = '';
+$content = '';
+$path = null;
+
+if ($id) {
+    $post = $db->getPostById($id);
+    if ($post) {
+        $title = $post['title'];
+        $content = $post['content'];
+        $path = $post['image'];
+    } else {
+        $_SESSION["flash_error"] = "Post not found";
+        header("Location: /");
+        exit();
+    }
+} else {
+    $_SESSION["flash_error"] = "Invalid post ID";
+    header("Location: /");
+    exit();
+}
+
+
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $titleF = filter_input(INPUT_POST, 'title');
+    $title = trim($titleF);
+    $contentF = filter_input(INPUT_POST, 'content');
+    $content = trim($contentF);
+
+    if (empty($title) || empty($content)) {
+        $_SESSION["flash_error"] = "title and content are required";
+        header("location: /post-edition.php?id=" . $id);
+        exit();
+    }
+
+    if (isset($_FILES["image"]) && $_FILES["image"]["error"] === UPLOAD_ERR_OK) {
+        try {
+            $olderPath = $path;
+            if (!empty($olderPath) && file_exists($olderPath)) {
+                unlink($olderPath);
+            }
+
+            $files = new File();
+            $files->fileCheck($_FILES);
+            $path = $files->uploadFile($_FILES);
+        } catch (Exception $e) {
+            $_SESSION["flash_error"] = $e->getMessage();
+            header("location: /post-edition.php?id=" . $id);
+            exit();
+        }
+    }
+
+
+    $db->updatePost($id, $title, $content, $path);
+
+    header("Location: /");
+    exit();
+}
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,22 +79,26 @@
 </head>
 
 <body>
-    <?php include "header.php"; ?>
+    <?php
+    include "fleshMsg.php";
+    ?>
 
+
+
+    <?php include "header.php"; ?>
     <div class="menu-container">
-        <form action="" method="post">
+        <form action="" method="POST" enctype="multipart/form-data">
             <label for="title">Title:</label>
-            <input type="text" id="title" name="title" required>
+            <input type="text" id="title" name="title" required value="<?= htmlspecialchars($title) ?>">
 
             <label for="content">Content:</label>
-            <textarea id="content" name="content" required></textarea>
-
-            <button type="submit">Save</button>
-            <button type="button" aria-label="cancel editing">Cancel</button>
+            <textarea id="content" name="content" required><?= htmlspecialchars($content) ?></textarea>
+            <label for="upload-file">Upload your file</label>
+            <input type="file" id="upload-file" name="image">
+            <button type="submit">edit Post</button>
+            <button type="reset">Reset</button>
         </form>
     </div>
-
-
 
 </body>
 

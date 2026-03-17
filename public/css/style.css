@@ -3,9 +3,12 @@
 body {
 
     font-family: 'Segoe UI', Tahoma, sans-serif;
+    font-weight: 700;
+    font-size: 25px;
+
 
     background:
-        radial-gradient(circle at top, #cfe6ff, #a8c9f0 40%, #dfeaf7);
+        linear-gradient(to left, #000000, #d3d3d3);
 
     margin: 0;
     padding: 0;
@@ -23,7 +26,7 @@ body {
 header {
 
     background:
-        linear-gradient(to bottom, #4fa3f7, #0f4fbf);
+        linear-gradient(to right, #000000, #ffffff);
 
     padding: 20px 40px;
 
@@ -96,7 +99,10 @@ a {
 
     padding: 8px 16px;
 
-    font-size: 14px;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+
 
     cursor: pointer;
 
@@ -226,7 +232,14 @@ a:active {
 
     margin-top: 0;
 
-    color: #1e69de;
+
+    background: linear-gradient(to right, #0b2a6f, #2f7cff);
+    -webkit-background-clip: text;
+
+    background-clip: text;
+
+    -webkit-text-fill-color: transparent;
+
 
 }
 
@@ -253,7 +266,9 @@ a:active {
 .menu-container {
 
     width: 100%;
-    max-width: 420px;
+    max-width: 620px;
+    min-height: 500px;
+
 
     margin: 80px auto;
 
@@ -262,7 +277,7 @@ a:active {
     border-radius: 10px;
 
     background:
-        linear-gradient(to bottom, #eaf3ff, #cfe0ff);
+        linear-gradient(to bottom, #e0e0e0, #5a5a5a);
 
     border: 1px solid #9db9e8;
 
@@ -350,7 +365,7 @@ footer {
     margin-top: auto;
 
     background:
-        linear-gradient(to bottom, #0f4fbf, #0b3f9c);
+        linear-gradient(to right, #000000, #ffffff);
 
     color: white;
 
@@ -392,13 +407,16 @@ footer {
 }
 
 
-
 .content {
+    padding: 10px;
+    overflow: hidden;
+
     display: -webkit-box;
     -webkit-line-clamp: 3;
     line-clamp: 3;
     -webkit-box-orient: vertical;
-    overflow: hidden;
+
+    transition: height 0.35s ease;
 }
 
 .content.open {
