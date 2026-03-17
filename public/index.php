@@ -23,7 +23,14 @@ $posts = $db->getPosts();
 
 
     <div class="post-container">
-        <?php $_SESSION["flash_error"]; ?>
+        <?php
+        if (isset($_SESSION["flash_error"])) {
+            echo htmlspecialchars($_SESSION["flash_error"]);
+            unset($_SESSION["flash_error"]);
+        }
+
+        ?>
+
         <?php foreach ($posts as $index => $post): ?>
 
             <div class="post">

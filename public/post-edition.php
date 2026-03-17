@@ -4,11 +4,6 @@ require __DIR__ . "/../src/classes/apload-and-load-filed.php";
 require __DIR__ . "/../src/classes/working-whith-db.php";
 $db = Database::getInstance();
 
-if (isset($_SESSION["flash_error"])) {
-    echo $_SESSION["flash_error"];
-    unset($_SESSION["flash_error"]);
-}
-
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 $post = null;
 $title = '';
@@ -26,6 +21,10 @@ if ($id) {
         header("Location: /");
         exit();
     }
+} else {
+    $_SESSION["flash_error"] = "Invalid post ID";
+    header("Location: /");
+    exit();
 }
 
 
@@ -44,9 +43,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (isset($_FILES["image"]) && $_FILES["image"]["error"] === UPLOAD_ERR_OK) {
         try {
-            $alderPath = $path;
-            if (file_exists($alderPath)) {
-                unlink($alderPath);
+            $olderPath = $path;
+            if (!empty($olderPath) && file_exists($olderPath)) {
+                unlink($olderPath);
             }
 
             $files = new File();
@@ -80,6 +79,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body>
+    <?php
+    if (isset($_SESSION["flash_error"])) {
+        echo htmlspecialchars($_SESSION["flash_error"]);
+        unset($_SESSION["flash_error"]);
+    }
+
+    ?>
+
+
 
     <?php include "header.php"; ?>
     <div class="menu-container">
