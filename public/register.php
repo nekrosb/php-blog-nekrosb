@@ -1,3 +1,42 @@
+<?php
+session_start();
+
+require_once __DIR__ . "/../src/classes/working-whith-db.php";
+require_once __DIR__ . "/../src/classes/user.php";
+$db = Database::getInstance();
+
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $usernamef = filter_input(INPUT_POST, "username");
+    $emailf = filter_input(INPUT_POST, "e-mail");
+    $passwordf = filter_input(INPUT_POST, "password");
+    $username = trim($usernamef);
+    $email = trim($emailf);
+    $password = trim($passwordf);
+
+    if (empty($username) || empty($email) || empty($password)) {
+        $_session["flash"] = "All fields are required.";
+        header("Location: register.php");
+        exit();
+    }
+
+    try {
+        $db->checkMailExistsForRegistretion($email);
+        $user = new User($db);
+        $user->checkPassword($password);
+        $db->createUser($username, $email, $password);
+        $_SESSION["flash"] = "Registration successful. Please log in.";
+        header("Location: login.php");
+        exit();
+    } catch (Exception $e) {
+        $_SESSION["flash"] = "Error: " . $e->getMessage();
+        header("Location: register.php");
+        exit();
+    }
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,6 +52,7 @@
     <?php include "header.php"; ?>
 
     <div class="menu-container">
+
         <form action="" method="POST">
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required>
