@@ -42,7 +42,7 @@ class Database
         }
     }
 
-    public function createPost(string $title, string $content, ?string $imagePath, $authorId): void
+    public function createPost(string $title, string $content, ?string $imagePath, int $authorId): void
     {
 
 

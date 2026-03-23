@@ -1,15 +1,15 @@
 <?php
 session_start();
-require __DIR__ . "/../src/classes/upload-and-load-file.php";
+
 require __DIR__ . "/../src/classes/working-with-db.php";
-require __DIR__ . "/../src/classes/user.php";
+
 $db = Database::getInstance();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $emailF = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
-    $email = trim($emailF);
-    $passwordF = filter_input(INPUT_POST, 'password');
-    $password = trim($passwordF);
+    $emailField = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
+    $email = trim($emailField);
+    $passwordField = filter_input(INPUT_POST, 'password');
+    $password = trim($passwordField);
 
     if (empty($email) || empty($password)) {
         $_SESSION["flash_error"] = "Email and password are required";
