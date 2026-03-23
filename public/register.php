@@ -8,7 +8,7 @@ $db = Database::getInstance();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $usernamef = filter_input(INPUT_POST, "username");
-    $emailf = filter_input(INPUT_POST, "e-mail");
+    $emailf = filter_input(INPUT_POST, "e-mail", FILTER_VALIDATE_EMAIL);
     $passwordf = filter_input(INPUT_POST, "password");
     $username = trim($usernamef);
     $email = trim($emailf);
@@ -52,6 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php include "header.php"; ?>
 
     <div class="menu-container">
+        <?php include "flashMsg.php" ?>
 
         <form action="" method="POST">
             <label for="username">Username:</label>
