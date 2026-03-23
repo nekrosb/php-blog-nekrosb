@@ -16,6 +16,7 @@ if ($id) {
         $title = $post['title'];
         $content = $post['content'];
         $path = $post['image'];
+        $authorId = $post['author_id'];
     } else {
         $_SESSION["flash_error"] = "Post not found";
         header("Location: /");
@@ -27,7 +28,11 @@ if ($id) {
     exit();
 }
 
-
+if (!isset($_SESSION['id']) || (int)$_SESSION['id'] !== (int)$authorId) {
+    $_SESSION["flash_error"] = "You are not authorized to edit this post";
+    header("Location: /");
+    exit();
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $titleField = filter_input(INPUT_POST, 'title');

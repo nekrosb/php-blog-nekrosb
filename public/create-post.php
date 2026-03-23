@@ -1,5 +1,10 @@
 <?php
 session_start();
+if (!isset($_SESSION['id'])) {
+    $_SESSION["flash_error"] = "You must be logged in to create a post";
+    header("Location: /login.php");
+    exit();
+}
 require __DIR__ . "/../src/classes/upload-and-load-file.php";
 require __DIR__ . "/../src/classes/working-with-db.php";
 $db = Database::getInstance();

@@ -48,7 +48,7 @@ $posts = $db->getPosts();
                 <button class="toggle-btn" aria-expanded="false" aria-controls="content-<?php echo $index; ?>">read more</button>
 
 
-                <?php if ((int)$post['author_id'] === (int)$_SESSION['id'] && isset($_SESSION['id'])): ?>
+                <?php if (isset($_SESSION['id']) && (int)$post['author_id'] === (int)$_SESSION['id']): ?>
                     <form action="/post-edition.php" method="GET">
                         <input type="hidden" name="id" value="<?php echo $post['id']; ?>">
                         <button type="submit">Edit Post</button>
