@@ -42,9 +42,9 @@ class Database
         }
     }
 
-    public function createPost(string $title, string $content, ?string $imagePath): void
+    public function createPost(string $title, string $content, ?string $imagePath, $authorId): void
     {
-        $authorId = 1;
+
 
         $stmt = $this->pdo->prepare("
             INSERT INTO posts (title, content, image, author_id)
@@ -75,7 +75,9 @@ class Database
 
     public function getPosts(): array
     {
-        $stmt = $this->pdo->query("SELECT id, title, image, content FROM posts ORDER BY created_at DESC");
+        $stmt = $this->pdo->query("SELECT p.id, p.title, p.image, p.content, p.author_id, p.created_at, u.name FROM posts p
+        JOIN users u ON p.author_id = u.id
+        ORDER BY created_at DESC");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 

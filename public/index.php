@@ -33,6 +33,8 @@ $posts = $db->getPosts();
             <div class="post">
 
                 <h2><?= htmlspecialchars($post['title']) ?></h2>
+                <p>by <?= htmlspecialchars($post['name']) ?></p>
+                <p>create at <?= htmlspecialchars($post['created_at']) ?></p>
 
                 <?php if ($post['image']): ?>
                     <img src="<?= htmlspecialchars($post['image']) ?>" alt="Post Image">
@@ -43,11 +45,12 @@ $posts = $db->getPosts();
                 </div>
 
                 <button class="toggle-btn" aria-expanded="false" aria-controls="content-<?= $index ?>">read more</button>
-
-                <form action="/post-edition.php" method="GET">
-                    <input type="hidden" name="id" value="<?= $post['id'] ?>">
-                    <button type="submit">Edit Post</button>
-                </form>
+                <?php if ($post['author_id'] === $_SESSION['id']): ?>
+                    <form action="/post-edition.php" method="GET">
+                        <input type="hidden" name="id" value="<?= $post['id'] ?>">
+                        <button type="submit">Edit Post</button>
+                    </form>
+                <?php endif; ?>
 
             </div>
 

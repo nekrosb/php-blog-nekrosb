@@ -6,6 +6,7 @@ $db = Database::getInstance();
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $id  = $_SESSION["id"];
     $titleField = filter_input(INPUT_POST, 'title');
     $title = trim($titleField);
     $contentField = filter_input(INPUT_POST, 'content');
@@ -31,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
 
-    $db->createPost($title, $content, $path);
+    $db->createPost($title, $content, $path, $id);
 
     header("Location: /");
     exit();
@@ -54,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <?php include "header.php"; ?>
     <div class="menu-container">
-        <?php include 'header.php'; ?>
+        <?PHP include "flashMsg.php" ?>
         <form action="" method="POST" enctype="multipart/form-data">
             <label for="title">Title:</label>
             <input type="text" id="title" name="title" required>

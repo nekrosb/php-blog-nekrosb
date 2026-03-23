@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS posts (
     title TEXT NOT NULL,
     image TEXT,
     content TEXT NOT NULL,
-    author_id INTEGER NOT NULL,
+  author_id INTEGER NOT NULL,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (author_id) REFERENCES users(id)
 );
