@@ -15,13 +15,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = trim($passwordf);
 
     if (empty($username) || empty($email) || empty($password)) {
-        $_session["flash"] = "All fields are required.";
+        $_SESSION["flash_error"] = "All fields are required.";
         header("Location: register.php");
         exit();
     }
 
     try {
-        $db->checkMailExistsForRegistretion($email);
+        $db->checkMailExistsForRegistration($email);
         $user = new User($db);
         $user->checkPassword($password);
         $db->createUser($username, $email, $password);
@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: login.php");
         exit();
     } catch (Exception $e) {
-        $_SESSION["flash"] = "Error: " . $e->getMessage();
+        $_SESSION["flash_error"] = $e->getMessage();
         header("Location: register.php");
         exit();
     }

@@ -1,8 +1,8 @@
 <?php
-class user
+class User
 {
 
-    function checkPassword(string $password)
+    public function checkPassword(string $password)
     {
         if (mb_strlen($password) < 8) {
             throw new Exception("Password must be at least 8 characters long");

@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <?php include "header.php"; ?>
     <div class="menu-container">
-        <?=  include "flash-messages.php" ?>
+        <?php include "flash-messages.php" ?>
         <form action="" method="POST" enctype="multipart/form-data">
             <label for="title">Title:</label>
             <input type="text" id="title" name="title" required>
