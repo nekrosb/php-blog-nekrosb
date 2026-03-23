@@ -4,11 +4,6 @@ require __DIR__ . "/../src/classes/apload-and-load-filed.php";
 require __DIR__ . "/../src/classes/working-whith-db.php";
 $db = Database::getInstance();
 
-if (isset($_SESSION["flash_error"])) {
-    echo $_SESSION["flash_error"];
-    unset($_SESSION["flash_error"]);
-}
-
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $titleF = filter_input(INPUT_POST, 'title');
@@ -59,6 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <?php include "header.php"; ?>
     <div class="menu-container">
+        <?php include "flashMsg.php" ?>
         <form action="" method="POST" enctype="multipart/form-data">
             <label for="title">Title:</label>
             <input type="text" id="title" name="title" required>

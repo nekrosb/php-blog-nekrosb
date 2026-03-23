@@ -103,4 +103,29 @@ class Database
         $post = $stmt->fetch(PDO::FETCH_ASSOC);
         return $post ?: null;
     }
+
+    public function checkMailExistsForRegistration(string $email): void
+    {
+        $stmt = $this->pdo->prepare("SELECT id FROM users WHERE email = :email");
+        $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+        $stmt->execute();
+        $existingUser = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($existingUser) {
+            throw new Exception("Email already exists");
+        }
+    }
+
+    public function createUser(string $username, string $email, string $password): void
+    {
+        $stmt = $this->pdo->prepare("
+            INSERT INTO users (name, email, password)
+            VALUES (:username, :email, :password)
+        ");
+
+        $stmt->bindParam(':username', $username);
+        $stmt->bindParam(':email', $email);
+        $stmt->bindValue(':password', password_hash($password, PASSWORD_DEFAULT));
+
+        $stmt->execute();
+    }
 }
