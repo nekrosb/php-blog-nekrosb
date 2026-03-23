@@ -1,6 +1,6 @@
 <?php
 session_start();
-require "../src/classes/working-whith-db.php";
+require "../src/classes/working-with-db.php";
 $db = Database::getInstance();
 $posts = $db->getPosts();
 
@@ -24,7 +24,7 @@ $posts = $db->getPosts();
 
     <div class="post-container">
         <?php
-        include "fleshMsg.php";
+        include "flashMsg.php";
 
         ?>
 

@@ -128,4 +128,19 @@ class Database
 
         $stmt->execute();
     }
+
+    public function takeUser(string $email, string $password): int
+    {
+        $stmt = $this->pdo->prepare("SELECT id, password FROM users WHERE email = :email");
+        $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+        $stmt->execute();
+
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$user || !password_verify($password, $user['password'])) {
+            throw new Exception("Invalid email or password");
+        }
+
+        return (int)$user['id'];
+    }
 }

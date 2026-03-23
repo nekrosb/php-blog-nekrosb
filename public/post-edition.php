@@ -1,7 +1,7 @@
 <?php
 session_start();
-require __DIR__ . "/../src/classes/apload-and-load-filed.php";
-require __DIR__ . "/../src/classes/working-whith-db.php";
+require __DIR__ . "/../src/classes/upload-and-load-file.php";
+require __DIR__ . "/../src/classes/working-with-db.php";
 $db = Database::getInstance();
 
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
@@ -30,10 +30,10 @@ if ($id) {
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $titleF = filter_input(INPUT_POST, 'title');
-    $title = trim($titleF);
-    $contentF = filter_input(INPUT_POST, 'content');
-    $content = trim($contentF);
+    $titleField = filter_input(INPUT_POST, 'title');
+    $title = trim($titleField);
+    $contentField = filter_input(INPUT_POST, 'content');
+    $content = trim($contentField);
 
     if (empty($title) || empty($content)) {
         $_SESSION["flash_error"] = "title and content are required";
@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <body>
     <?php
-    include "fleshMsg.php";
+    include "flashMsg.php";
     ?>
 
 
