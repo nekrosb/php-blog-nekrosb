@@ -32,22 +32,25 @@ $posts = $db->getPosts();
 
             <div class="post">
 
-                <h2><?= htmlspecialchars($post['title']) ?></h2>
-                <p>by <?= htmlspecialchars($post['name']) ?></p>
-                <p>create at <?= htmlspecialchars($post['created_at']) ?></p>
+                <h2><?php echo htmlspecialchars($post['title']); ?></h2>
+                <p>by <?php echo htmlspecialchars($post['name']); ?></p>
+                <p>create at <?php echo htmlspecialchars($post['created_at']); ?></p>
+
 
                 <?php if ($post['image']): ?>
-                    <img src="<?= htmlspecialchars($post['image']) ?>" alt="Post Image">
+                    <img src="<?php echo htmlspecialchars($post['image']); ?>" alt="Post Image">
                 <?php endif; ?>
 
-                <div class="content" id="content-<?= $index ?>">
-                    <?= nl2br(htmlspecialchars($post['content'])) ?>
+                <div class="content" id="content-<?php echo $index; ?>">
+                    <?php echo nl2br(htmlspecialchars($post['content'])); ?>
                 </div>
 
-                <button class="toggle-btn" aria-expanded="false" aria-controls="content-<?= $index ?>">read more</button>
-                <?php if ($post['author_id'] === $_SESSION['id']): ?>
+                <button class="toggle-btn" aria-expanded="false" aria-controls="content-<?php echo $index; ?>">read more</button>
+
+
+                <?php if ((int)$post['author_id'] === (int)$_SESSION['id'] && isset($_SESSION['id'])): ?>
                     <form action="/post-edition.php" method="GET">
-                        <input type="hidden" name="id" value="<?= $post['id'] ?>">
+                        <input type="hidden" name="id" value="<?php echo $post['id']; ?>">
                         <button type="submit">Edit Post</button>
                     </form>
                 <?php endif; ?>

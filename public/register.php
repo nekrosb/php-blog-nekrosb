@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php include "header.php"; ?>
 
     <div class="menu-container">
-        <?PHP include "flashMsg.php" ?>
+        <?php include "flashMsg.php" ?>
 
         <form action="" method="POST">
             <label for="username">Username:</label>
