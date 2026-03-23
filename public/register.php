@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         $db->checkMailExistsForRegistration($email);
-        $user = new User($db);
+        $user = new User();
         $user->checkPassword($password);
         $db->createUser($username, $email, $password);
         $_SESSION["flash"] = "Registration successful. Please log in.";
