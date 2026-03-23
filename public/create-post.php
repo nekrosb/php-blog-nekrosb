@@ -1,15 +1,23 @@
 <?php
 session_start();
-require __DIR__ . "/../src/classes/apload-and-load-filed.php";
-require __DIR__ . "/../src/classes/working-whith-db.php";
+require __DIR__ . "/../src/classes/upload-and-load-file.php";
+require __DIR__ . "/../src/classes/working-with-db.php";
+require __DIR__ . "/../src/classes/user.php";
+if (!User::checkSession($_SESSION["id"])) {
+    $_SESSION["flash_error"] = "You must be logged in to edit a post";
+    header("Location: /login.php");
+    exit();
+}
+
 $db = Database::getInstance();
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $titleF = filter_input(INPUT_POST, 'title');
-    $title = trim($titleF);
-    $contentF = filter_input(INPUT_POST, 'content');
-    $content = trim($contentF);
+    $id  = $_SESSION["id"];
+    $titleField = filter_input(INPUT_POST, 'title');
+    $title = trim($titleField);
+    $contentField = filter_input(INPUT_POST, 'content');
+    $content = trim($contentField);
     $path = null;
 
     if (empty($title) || empty($content)) {
@@ -31,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
 
-    $db->createPost($title, $content, $path);
+    $db->createPost($title, $content, $path, $id);
 
     header("Location: /");
     exit();

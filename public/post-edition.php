@@ -1,7 +1,13 @@
 <?php
 session_start();
-require __DIR__ . "/../src/classes/apload-and-load-filed.php";
-require __DIR__ . "/../src/classes/working-whith-db.php";
+require __DIR__ . "/../src/classes/upload-and-load-file.php";
+require __DIR__ . "/../src/classes/working-with-db.php";
+require __DIR__ . "/../src/classes/user.php";
+if (!User::checkSession($_SESSION["id"])) {
+    $_SESSION["flash_error"] = "You must be logged in to edit a post";
+    header("Location: /login.php");
+    exit();
+}
 $db = Database::getInstance();
 
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
@@ -16,6 +22,7 @@ if ($id) {
         $title = $post['title'];
         $content = $post['content'];
         $path = $post['image'];
+        $authorId = $post['author_id'];
     } else {
         $_SESSION["flash_error"] = "Post not found";
         header("Location: /");
@@ -27,13 +34,17 @@ if ($id) {
     exit();
 }
 
-
+if ((int)$_SESSION['id'] !== (int)$authorId) {
+    $_SESSION["flash_error"] = "You are not authorized to edit this post";
+    header("Location: /");
+    exit();
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $titleF = filter_input(INPUT_POST, 'title');
-    $title = trim($titleF);
-    $contentF = filter_input(INPUT_POST, 'content');
-    $content = trim($contentF);
+    $titleField = filter_input(INPUT_POST, 'title');
+    $title = trim($titleField);
+    $contentField = filter_input(INPUT_POST, 'content');
+    $content = trim($contentField);
 
     if (empty($title) || empty($content)) {
         $_SESSION["flash_error"] = "title and content are required";
@@ -80,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <body>
     <?php
-    include "fleshMsg.php";
+    include "flashMsg.php";
     ?>
 
 
@@ -89,10 +100,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="menu-container">
         <form action="" method="POST" enctype="multipart/form-data">
             <label for="title">Title:</label>
-            <input type="text" id="title" name="title" required value="<?= htmlspecialchars($title) ?>">
+            <input type="text" id="title" name="title" required value="<?php echo htmlspecialchars($title); ?>">
 
             <label for="content">Content:</label>
-            <textarea id="content" name="content" required><?= htmlspecialchars($content) ?></textarea>
+            <textarea id="content" name="content" required><?php echo htmlspecialchars($content); ?></textarea>
             <label for="upload-file">Upload your file</label>
             <input type="file" id="upload-file" name="image">
             <button type="submit">edit Post</button>

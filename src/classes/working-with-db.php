@@ -42,9 +42,9 @@ class Database
         }
     }
 
-    public function createPost(string $title, string $content, ?string $imagePath): void
+    public function createPost(string $title, string $content, ?string $imagePath, int $authorId): void
     {
-        $authorId = 1;
+
 
         $stmt = $this->pdo->prepare("
             INSERT INTO posts (title, content, image, author_id)
@@ -75,7 +75,9 @@ class Database
 
     public function getPosts(): array
     {
-        $stmt = $this->pdo->query("SELECT id, title, image, content FROM posts ORDER BY created_at DESC");
+        $stmt = $this->pdo->query("SELECT p.id, p.title, p.image, p.content, p.author_id, p.created_at, u.name FROM posts p
+        JOIN users u ON p.author_id = u.id
+        ORDER BY created_at DESC");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -96,7 +98,7 @@ class Database
     }
     public function getPostById(int $id): ?array
     {
-        $stmt = $this->pdo->prepare("SELECT  title, content, image FROM posts WHERE id = :id");
+        $stmt = $this->pdo->prepare("SELECT  title, content, image, author_id FROM posts WHERE id = :id");
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
 
@@ -127,5 +129,20 @@ class Database
         $stmt->bindValue(':password', password_hash($password, PASSWORD_DEFAULT));
 
         $stmt->execute();
+    }
+
+    public function takeUser(string $email, string $password): int
+    {
+        $stmt = $this->pdo->prepare("SELECT id, password FROM users WHERE email = :email");
+        $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+        $stmt->execute();
+
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$user || !password_verify($password, $user['password'])) {
+            throw new Exception("Invalid email or password");
+        }
+
+        return (int)$user['id'];
     }
 }

@@ -1,18 +1,18 @@
 <?php
 session_start();
 
-require_once __DIR__ . "/../src/classes/working-whith-db.php";
-require_once __DIR__ . "/../src/classes/user.php";
+require __DIR__ . "/../src/classes/working-with-db.php";
+require __DIR__ . "/../src/classes/user.php";
 $db = Database::getInstance();
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $usernamef = filter_input(INPUT_POST, "username");
-    $emailf = filter_input(INPUT_POST, "e-mail", FILTER_VALIDATE_EMAIL);
-    $passwordf = filter_input(INPUT_POST, "password");
-    $username = trim($usernamef);
-    $email = trim($emailf);
-    $password = trim($passwordf);
+    $usernameField = filter_input(INPUT_POST, "username");
+    $emailField = filter_input(INPUT_POST, "email", FILTER_VALIDATE_EMAIL);
+    $passwordField = filter_input(INPUT_POST, "password");
+    $username = trim($usernameField);
+    $email = trim($emailField);
+    $password = trim($passwordField);
 
     if (empty($username) || empty($email) || empty($password)) {
         $_SESSION["flash_error"] = "All fields are required.";
@@ -58,8 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required>
 
-            <label for="e-mail">Email:</label>
-            <input type="email" id="e-mail" name="e-mail" required>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
 
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>

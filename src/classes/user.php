@@ -24,4 +24,12 @@ class User
             throw new Exception("Password must contain at least one special character");
         }
     }
+
+    public static function checkSession($sessionId): bool
+    {
+        if (isset($sessionId)) {
+            return true;
+        }
+        return false;
+    }
 }
