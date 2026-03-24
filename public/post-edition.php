@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     $db->updatePost($id, $title, $content, $path);
-
+    $_SESSION["flash_error"] = "Post updated successfully";
     header("Location: /");
     exit();
 }

@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("location: /login.php");
         exit();
     }
-
+    $_SESSION["flash_error"] = "Login successful";
     header("Location: /");
     exit();
 }

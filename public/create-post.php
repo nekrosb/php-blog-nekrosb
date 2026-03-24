@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     $db->createPost($title, $content, $path, $id);
-
+    $_SESSION["flash_error"] = "Post created successfully";
     header("Location: /");
     exit();
 }
