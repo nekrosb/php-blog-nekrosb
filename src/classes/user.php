@@ -25,11 +25,8 @@ class User
         }
     }
 
-    public static function checkSession($sessionId): bool
+    public static function checkSession(): bool
     {
-        if (isset($sessionId)) {
-            return true;
-        }
-        return false;
+        return isset($_SESSION["id"]);
     }
 }
