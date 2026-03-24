@@ -1,9 +1,9 @@
 <?php
 session_start();
-require __DIR__ . "/../src/classes/upload-and-load-file.php";
-require __DIR__ . "/../src/classes/working-with-db.php";
-require __DIR__ . "/../src/classes/user.php";
-if (!User::checkSession($_SESSION["id"])) {
+require_once __DIR__ . "/../src/classes/upload-and-load-file.php";
+require_once __DIR__ . "/../src/classes/working-with-db.php";
+require_once __DIR__ . "/../src/classes/user.php";
+if (!User::checkSession()) {
     $_SESSION["flash_error"] = "You must be logged in to edit a post";
     header("Location: /login.php");
     exit();

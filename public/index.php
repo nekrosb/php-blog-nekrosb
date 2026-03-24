@@ -1,7 +1,7 @@
 <?php
 session_start();
-require "../src/classes/working-with-db.php";
-require __DIR__ . "/../src/classes/user.php";
+require_once "../src/classes/working-with-db.php";
+require_once __DIR__ . "/../src/classes/user.php";
 
 $db = Database::getInstance();
 $posts = $db->getPosts();
@@ -50,7 +50,7 @@ $posts = $db->getPosts();
                 <button class="toggle-btn" aria-expanded="false" aria-controls="content-<?php echo $index; ?>">read more</button>
 
 
-                <?php if (user::checkSession($_SESSION["id"]) && (int)$post['author_id'] === (int)$_SESSION['id']): ?>
+                <?php if (user::checkSession() && isset($_SESSION['id']) && (int)$post['author_id'] === (int)$_SESSION['id']): ?>
                     <form action="/post-edition.php" method="GET">
                         <input type="hidden" name="id" value="<?php echo $post['id']; ?>">
                         <button type="submit">Edit Post</button>

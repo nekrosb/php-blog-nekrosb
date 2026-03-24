@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-require __DIR__ . "/../src/classes/working-with-db.php";
+require_once __DIR__ . "/../src/classes/working-with-db.php";
 
 $db = Database::getInstance();
 
