@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = trim($passwordField);
 
     if (empty($username) || empty($email) || empty($password)) {
-        $_SESSION["flash_error"] = "All fields are required.";
+        $_SESSION["flash_msg"] = "All fields are required.";
         header("Location: register.php");
         exit();
     }
@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: login.php");
         exit();
     } catch (Exception $e) {
-        $_SESSION["flash_error"] = $e->getMessage();
+        $_SESSION["flash_msg"] = $e->getMessage();
         header("Location: register.php");
         exit();
     }

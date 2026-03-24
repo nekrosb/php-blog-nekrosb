@@ -4,7 +4,7 @@ require_once __DIR__ . "/../src/classes/upload-and-load-file.php";
 require_once __DIR__ . "/../src/classes/working-with-db.php";
 require_once __DIR__ . "/../src/classes/user.php";
 if (!User::checkSession()) {
-    $_SESSION["flash_error"] = "You must be logged in to edit a post";
+    $_SESSION["flash_msg"] = "You must be logged in to edit a post";
     header("Location: /login.php");
     exit();
 }
@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $path = null;
 
     if (empty($title) || empty($content)) {
-        $_SESSION["flash_error"] = "title and content are required";
+        $_SESSION["flash_msg"] = "title and content are required";
         header("location: /create-post.php");
         exit();
     }
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $files->fileCheck($_FILES);
             $path = $files->uploadFile($_FILES);
         } catch (Exception $e) {
-            $_SESSION["flash_error"] = $e->getMessage();
+            $_SESSION["flash_msg"] = $e->getMessage();
             header("location: /create-post.php");
             exit();
         }
@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     $db->createPost($title, $content, $path, $id);
-    $_SESSION["flash_error"] = "Post created successfully";
+    $_SESSION["flash_msg"] = "Post created successfully";
     header("Location: /");
     exit();
 }

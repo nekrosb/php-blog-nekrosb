@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = trim($passwordField);
 
     if (empty($email) || empty($password)) {
-        $_SESSION["flash_error"] = "Email and password are required";
+        $_SESSION["flash_msg"] = "Email and password are required";
         header("location: /login.php");
         exit();
     }
@@ -23,11 +23,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $id = $db->takeUser($email, $password);
         $_SESSION["id"] = $id;
     } catch (Exception $e) {
-        $_SESSION["flash_error"] = $e->getMessage();
+        $_SESSION["flash_msg"] = $e->getMessage();
         header("location: /login.php");
         exit();
     }
-    $_SESSION["flash_error"] = "Login successful";
+    $_SESSION["flash_msg"] = "Login successful";
     header("Location: /");
     exit();
 }

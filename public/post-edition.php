@@ -4,7 +4,7 @@ require_once __DIR__ . "/../src/classes/upload-and-load-file.php";
 require_once __DIR__ . "/../src/classes/working-with-db.php";
 require_once __DIR__ . "/../src/classes/user.php";
 if (!User::checkSession()) {
-    $_SESSION["flash_error"] = "You must be logged in to edit a post";
+    $_SESSION["flash_msg"] = "You must be logged in to edit a post";
     header("Location: /login.php");
     exit();
 }
@@ -24,18 +24,18 @@ if ($id) {
         $path = $post['image'];
         $authorId = $post['author_id'];
     } else {
-        $_SESSION["flash_error"] = "Post not found";
+        $_SESSION["flash_msg"] = "Post not found";
         header("Location: /");
         exit();
     }
 } else {
-    $_SESSION["flash_error"] = "Invalid post ID";
+    $_SESSION["flash_msg"] = "Invalid post ID";
     header("Location: /");
     exit();
 }
 
 if ((int)$_SESSION['id'] !== (int)$authorId) {
-    $_SESSION["flash_error"] = "You are not authorized to edit this post";
+    $_SESSION["flash_msg"] = "You are not authorized to edit this post";
     header("Location: /");
     exit();
 }
@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $content = trim($contentField);
 
     if (empty($title) || empty($content)) {
-        $_SESSION["flash_error"] = "title and content are required";
+        $_SESSION["flash_msg"] = "title and content are required";
         header("location: /post-edition.php?id=" . $id);
         exit();
     }
@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $files->fileCheck($_FILES);
             $path = $files->uploadFile($_FILES);
         } catch (Exception $e) {
-            $_SESSION["flash_error"] = $e->getMessage();
+            $_SESSION["flash_msg"] = $e->getMessage();
             header("location: /post-edition.php?id=" . $id);
             exit();
         }
@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     $db->updatePost($id, $title, $content, $path);
-    $_SESSION["flash_error"] = "Post updated successfully";
+    $_SESSION["flash_msg"] = "Post updated successfully";
     header("Location: /");
     exit();
 }
