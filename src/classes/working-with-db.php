@@ -72,12 +72,20 @@ class Database
             $this->createDB();
         }
     }
+    public function getTotalNumberOfPosts(): int
+    {
+        $stmt = $this->pdo->query("SELECT COUNT(*) FROM posts");
+        return (int)$stmt->fetchColumn();
+    }
 
-    public function getPosts(): array
+
+    public function getPosts($limit, $offset): array
     {
         $stmt = $this->pdo->query("SELECT p.id, p.title, p.image, p.content, p.author_id, p.created_at, u.name FROM posts p
         JOIN users u ON p.author_id = u.id
-        ORDER BY created_at DESC");
+        ORDER BY created_at DESC
+        LIMIT $limit 
+        OFFSET $offset");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
