@@ -72,12 +72,22 @@ class Database
             $this->createDB();
         }
     }
-
-    public function getPosts(): array
+    public function getTotalNumberOfPosts(): int
     {
-        $stmt = $this->pdo->query("SELECT p.id, p.title, p.image, p.content, p.author_id, p.created_at, u.name FROM posts p
+        $stmt = $this->pdo->query("SELECT COUNT(*) FROM posts");
+        return (int)$stmt->fetchColumn();
+    }
+
+
+    public function getPosts($limit, $offset): array
+    {
+        $stmt = $this->pdo->query("SELECT p.id, p.title, p.image, p.content, p.author_id, p.created_at, u.name,
+        (SELECT COUNT(*) FROM comments c WHERE c.post_id = p.id) as comment_count
+        FROM posts p
         JOIN users u ON p.author_id = u.id
-        ORDER BY created_at DESC");
+        ORDER BY created_at DESC
+        LIMIT $limit 
+        OFFSET $offset");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -96,9 +106,12 @@ class Database
 
         $stmt->execute();
     }
+
     public function getPostById(int $id): ?array
     {
-        $stmt = $this->pdo->prepare("SELECT  title, content, image, author_id FROM posts WHERE id = :id");
+        $stmt = $this->pdo->prepare("SELECT  p.title, p.content, p.created_at, p.image, u.name FROM posts p 
+        join users u ON p.author_id = u.id
+        WHERE p.id = :id");
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
 
@@ -144,5 +157,32 @@ class Database
         }
 
         return (int)$user['id'];
+    }
+
+    public function getPostsComments(int $postId): array
+    {
+        $stmt = $this->pdo->prepare("SELECT c.content, c.created_at, u.name FROM comments c
+        JOIN users u ON c.author_id = u.id
+        WHERE c.post_id = :postId
+        ORDER BY created_at DESC");
+        $stmt->bindParam(':postId', $postId, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+
+    public function createComment(int $postId, int $authorId, string $content): void
+    {
+        $stmt = $this->pdo->prepare("
+            INSERT INTO comments (post_id, author_id, content)
+            VALUES (:postId, :authorId, :content)
+        ");
+
+        $stmt->bindParam(':postId', $postId, PDO::PARAM_INT);
+        $stmt->bindParam(':authorId', $authorId, PDO::PARAM_INT);
+        $stmt->bindParam(':content', $content, PDO::PARAM_STR);
+
+        $stmt->execute();
     }
 }

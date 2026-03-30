@@ -4,7 +4,15 @@ require_once "../src/classes/working-with-db.php";
 require_once __DIR__ . "/../src/classes/user.php";
 
 $db = Database::getInstance();
-$posts = $db->getPosts();
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+if ($page < 1) {
+    $page = 1;
+}
+$limit = 10; // Number of posts per page
+$offset = ($page - 1) * $limit;
+$numberOfPages = ceil($db->getTotalNumberOfPosts() / $limit);
+$posts = $db->getPosts($limit, $offset);
+
 
 
 ?>
@@ -57,6 +65,8 @@ $posts = $db->getPosts();
                     </form>
                 <?php endif; ?>
 
+                <a href="comments.php?id=<?php echo $post['id']; ?>">View Comments (<?php echo $post['comment_count']; ?>)</a>
+
             </div>
 
         <?php endforeach; ?>
@@ -108,8 +118,24 @@ $posts = $db->getPosts();
             });
         </script>
 
-
     </div>
+
+    <nav>
+        <ul>
+            <?php for ($i = 1; $i <= $numberOfPages; $i++): ?>
+                <li>
+                    <?php
+                    if ($i === $page) {
+                        echo "<strong>$i</strong>";
+                    } else {
+                        echo "<a href=\"?page=$i\">$i</a>";
+                    } ?>
+                </li>
+            <?php endfor; ?>
+        </ul>
+    </nav>
+
+
     <footer>
         <p>&copy; 2023 My Blog. All rights reserved.</p>
     </footer>
