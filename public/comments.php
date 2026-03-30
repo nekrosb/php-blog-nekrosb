@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="comments-section">
             <h2>Comments</h2>
-            
+            <?php if (!empty($comments)): ?>
                 <?php foreach ($comments as $comment): ?>
                     <div class="comment">
                         <strong><?php echo htmlspecialchars($comment['name']); ?></strong>
