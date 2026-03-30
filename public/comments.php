@@ -20,6 +20,11 @@ if (!$post) {
 $comments = $db->getPostsComments($postId);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!isset($_SESSION['id'])) {
+        $_SESSION['flash_message'] = "You must be logged in to post a comment.";
+        header("Location: login.php");
+        exit();
+    }
 
     $content = trim($_POST['content']);
     if (empty($content)) {

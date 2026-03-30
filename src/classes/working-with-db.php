@@ -81,7 +81,9 @@ class Database
 
     public function getPosts($limit, $offset): array
     {
-        $stmt = $this->pdo->query("SELECT p.id, p.title, p.image, p.content, p.author_id, p.created_at, u.name FROM posts p
+        $stmt = $this->pdo->query("SELECT p.id, p.title, p.image, p.content, p.author_id, p.created_at, u.name,
+        (SELECT COUNT(*) FROM comments c WHERE c.post_id = p.id) as comment_count
+        FROM posts p
         JOIN users u ON p.author_id = u.id
         ORDER BY created_at DESC
         LIMIT $limit 
@@ -104,6 +106,7 @@ class Database
 
         $stmt->execute();
     }
+
     public function getPostById(int $id): ?array
     {
         $stmt = $this->pdo->prepare("SELECT  p.title, p.content, p.created_at, p.image, u.name FROM posts p 
@@ -168,14 +171,6 @@ class Database
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function countCommentsForPost(int $postId): int
-    {
-        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM comments WHERE post_id = :postId");
-        $stmt->bindParam(':postId', $postId, PDO::PARAM_INT);
-        $stmt->execute();
-
-        return (int)$stmt->fetchColumn();
-    }
 
     public function createComment(int $postId, int $authorId, string $content): void
     {
