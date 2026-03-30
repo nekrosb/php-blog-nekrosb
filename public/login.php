@@ -20,8 +20,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
 
-        $id = $db->takeUser($email, $password);
-        $_SESSION["id"] = $id;
+        $user = $db->takeUser($email, $password);
+        $_SESSION["id"] = $user[0];
+        $_SESSION["role"] = $user[1];
     } catch (Exception $e) {
         $_SESSION["flash_msg"] = $e->getMessage();
         header("location: /login.php");

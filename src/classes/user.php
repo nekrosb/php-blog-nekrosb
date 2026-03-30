@@ -27,6 +27,6 @@ class User
 
     public static function checkSession(): bool
     {
-        return isset($_SESSION["id"]);
+        return isset($_SESSION['id']);
     }
 }

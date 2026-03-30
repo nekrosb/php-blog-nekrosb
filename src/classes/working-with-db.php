@@ -35,6 +35,7 @@ class Database
 
         if (!$result->fetch()) {
             $this->createDB();
+            $this->createUser("admin", "admin@gmail.com", "admin123", "admin");
         }
     }
 
@@ -69,9 +70,12 @@ class Database
             FROM posts p
             JOIN users u ON p.author_id = u.id
             ORDER BY created_at DESC
-            LIMIT $limit 
-            OFFSET $offset
+            LIMIT :limit 
+            OFFSET :offset
         ");
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -137,23 +141,24 @@ class Database
         }
     }
 
-    public function createUser(string $username, string $email, string $password): void
+    public function createUser(string $username, string $email, string $password, string $role = 'user'): void
     {
         $stmt = $this->pdo->prepare("
-            INSERT INTO users (name, email, password)
-            VALUES (:username, :email, :password)
+            INSERT INTO users (name, email, role, password)
+            VALUES (:username, :email, :role, :password)
         ");
 
         $stmt->bindParam(':username', $username);
         $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':role', $role);
         $stmt->bindValue(':password', password_hash($password, PASSWORD_DEFAULT));
 
         $stmt->execute();
     }
 
-    public function takeUser(string $email, string $password): int
+    public function takeUser(string $email, string $password): array // returns [id, role]
     {
-        $stmt = $this->pdo->prepare("SELECT id, password FROM users WHERE email = :email");
+        $stmt = $this->pdo->prepare("SELECT id, role, password FROM users WHERE email = :email");
         $stmt->bindParam(':email', $email, PDO::PARAM_STR);
         $stmt->execute();
 
@@ -163,7 +168,7 @@ class Database
             throw new Exception("Invalid email or password");
         }
 
-        return (int)$user['id'];
+        return [(int)$user['id'], $user['role']];
     }
 
     // --- Comments Management ---
