@@ -29,11 +29,12 @@ class Database
 
     public function ensureDBExists(): void
     {
-        $result = $this->pdo->query(
+        $stmt = $this->pdo->prepare(
             "SELECT name FROM sqlite_master WHERE type='table' AND name='posts'"
         );
+        $stmt->execute();
 
-        if (!$result->fetch()) {
+        if (!$stmt->fetch()) {
             $this->createDB();
             $this->createUser("admin", "admin@gmail.com", "admin123", "admin");
         }
@@ -58,13 +59,14 @@ class Database
 
     public function getTotalNumberOfPosts(): int
     {
-        $stmt = $this->pdo->query("SELECT COUNT(*) FROM posts");
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM posts");
+        $stmt->execute();
         return (int)$stmt->fetchColumn();
     }
 
     public function getPosts(int $limit, int $offset): array
     {
-        $stmt = $this->pdo->query("
+        $stmt = $this->pdo->prepare("
             SELECT p.id, p.title, p.image, p.content, p.author_id, p.created_at, u.name,
                    (SELECT COUNT(*) FROM comments c WHERE c.post_id = p.id) as comment_count
             FROM posts p

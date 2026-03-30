@@ -34,7 +34,7 @@ if ($id) {
     exit();
 }
 
-if ((int)$_SESSION['id'] !== (int)$authorId && $_SESSION['role'] !== "admin") {
+if (!User::canEdit((int)$authorId)) {
     $_SESSION["flash_msg"] = "You are not authorized to edit this post";
     header("Location: /");
     exit();
