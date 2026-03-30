@@ -15,3 +15,14 @@ CREATE TABLE IF NOT EXISTS posts (
     created_at TEXT DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (author_id) REFERENCES users(id)
 );
+
+
+create table if not exists comments (
+    id integer primary key autoincrement,
+    post_id integer not null,
+    author_id integer not null,
+    content text not null,
+    created_at text default current_timestamp,
+    foreign key (post_id) references posts(id),
+    foreign key (author_id) references users(id)
+);
