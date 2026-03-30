@@ -64,7 +64,7 @@ $posts = $db->getPosts($limit, $offset);
                         <button type="submit">Edit Post</button>
                     </form>
                 <?php endif; ?>
-                <?php $numberOfComments = $db->countCommentsForPost($post['id']); ?>
+
                 <a href="comments.php?id=<?php echo $post['id']; ?>">View Comments (<?php echo $post['comment_count']; ?>)</a>
 
             </div>
