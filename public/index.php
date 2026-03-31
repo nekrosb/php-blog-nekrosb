@@ -76,48 +76,54 @@ $posts = $db->getPosts($limit, $offset);
 
 
         <script>
-            document.querySelectorAll(".toggle-btn").forEach(button => {
+            document.addEventListener("DOMContentLoaded", () => {
+                document.querySelectorAll(".toggle-btn").forEach(button => {
+                    const content = button.parentElement.querySelector(".content");
 
-                button.addEventListener("click", function() {
+                    // Reliably check if content overflows the clamped 3 lines
+                    // Momentarily remove the max-height and clamp to get true height
+                    const originalMaxHeight = content.style.maxHeight;
+                    content.classList.add("open");
+                    const fullHeight = content.scrollHeight;
+                    content.classList.remove("open");
 
-                    const content = this.parentElement.querySelector(".content");
-
-                    const isOpen = content.classList.contains("open");
-
-                    if (!isOpen) {
-
-                        const fullHeight = content.scrollHeight;
-
-                        content.style.height = content.clientHeight + "px";
-
-                        requestAnimationFrame(() => {
-                            content.style.height = fullHeight + "px";
-                        });
-
-                        content.classList.add("open");
-
-                        this.textContent = "read less";
-                        this.setAttribute("aria-expanded", "true");
-
-                    } else {
-
-
-                        const currentHeight = content.scrollHeight;
-
-                        content.style.height = currentHeight + "px";
-
-                        requestAnimationFrame(() => {
-                            content.style.height = "4.5em";
-                        });
-
-                        content.classList.remove("open");
-
-                        this.textContent = "read more";
-                        this.setAttribute("aria-expanded", "false");
+                    // If the unabridged height is basically the same as the clamped height 
+                    // (with a small margin of error for line heights), hide the button.
+                    if (fullHeight <= content.clientHeight + 5) {
+                        button.style.display = 'none';
                     }
 
-                });
+                    button.addEventListener("click", function() {
+                        const isOpen = content.classList.contains("open");
 
+                        if (!isOpen) {
+                            // Expand
+                            content.style.maxHeight = content.clientHeight + "px";
+                            content.classList.add("open");
+                            content.offsetHeight; // Force layout reflow
+                            content.style.maxHeight = content.scrollHeight + "px";
+
+                            this.textContent = "read less";
+                            this.setAttribute("aria-expanded", "true");
+
+                            // Cleanup explicitly set max-height after transition
+                            setTimeout(() => {
+                                if (content.classList.contains("open")) {
+                                    content.style.maxHeight = "none";
+                                }
+                            }, 350);
+                        } else {
+                            // Collapse
+                            content.style.maxHeight = content.scrollHeight + "px";
+                            content.offsetHeight; // Force layout reflow
+                            content.classList.remove("open");
+                            content.style.maxHeight = "4.8rem";
+
+                            this.textContent = "read more";
+                            this.setAttribute("aria-expanded", "false");
+                        }
+                    });
+                });
             });
         </script>
 

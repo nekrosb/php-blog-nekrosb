@@ -1,0 +1,25 @@
+--- public/css/style.css
++++ public/css/style.css
+@@ -266,22 +266,16 @@
+     font-size: 1rem;
+     line-height: 1.6;
+     padding: 0;
+-    transition: height 0.35s ease-in-out;
+-}
+-
+-/* Clamp content only if it has a toggle button in the DOM near it */
+-.content:has(+ .toggle-btn) {
+     overflow: hidden;
+     display: -webkit-box;
+     -webkit-line-clamp: 3;
+     -webkit-box-orient: vertical;
++    transition: max-height 0.35s ease-in-out;
++    max-height: 4.8rem; /* 3 lines * 1.6 line-height */
+ }
+ 
+ .content.open {
+     -webkit-line-clamp: unset !important;
++    line-clamp: unset !important;
+ }
+ 
+ .toggle-btn {

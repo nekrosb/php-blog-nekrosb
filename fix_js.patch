@@ -1,0 +1,64 @@
+--- public/index.php
++++ public/index.php
+@@ -88,43 +88,29 @@
+ 
+                                     if (!isOpen) {
+-                                        // Opening
+-                                        const initialHeight = content.clientHeight;
+-
+-                                        // Set explicit height to prevent jumping before removing clamp
+-                                        content.style.height = initialHeight + "px";
+-
+-                                        // Remove line clamp
+-                                        content.classList.add("open");
+-
+-                                        // Force layout recalculation
+-                                        content.offsetHeight;
+-
+-                                        // Get full height
+-                                        const fullHeight = content.scrollHeight;
+-
+-                                        // Animate to full height
+-                                        content.style.height = fullHeight + "px";
++                                        // Start Opening
++                                        content.style.maxHeight = content.clientHeight + "px";
++                                        content.classList.add("open");
++                                        content.offsetHeight; // force reflow
++                                        content.style.maxHeight = content.scrollHeight + "px";
+ 
+                                         this.textContent = "read less";
+                                         this.setAttribute("aria-expanded", "true");
+ 
+-                                        // Cleanup inline height after transition finishes
+                                         setTimeout(() => {
+                                             if (content.classList.contains("open")) {
+-                                                content.style.height = "auto";
++                                                content.style.maxHeight = "none";
+                                             }
+                                         }, 350);
+                                     } else {
+-                                        // Closing
+-                                        // Get current height (could be 'auto', so we read offsetHeight)
+-                                        const currentHeight = content.offsetHeight;
+-
+-                                        // Put explicit height back to start animation
+-                                        content.style.height = currentHeight + "px";
+-
+-                                        // Force layout recalculation
+-                                        content.offsetHeight;
+-
+-                                        // Add clamp back immediately (text inside truncates), 
+-                                        // but container will smoothly shrink because of the explicit height
+-                                        content.classList.remove("open");
+-
+-                                        // Animate down to clamped height (approx 3 lines -> 4.8rem, 
+-                                        // or just empty style.height to let the line-clamp dictate the height)
+-                                        // Setting empty height triggers animation because transition is active 
+-                                        content.style.height = "";
++                                        // Start Closing
++                                        content.style.maxHeight = content.scrollHeight + "px";
++                                        content.offsetHeight; // force reflow
++                                        content.classList.remove("open");
++                                        content.style.maxHeight = "4.8rem";
+ 
+                                         this.textContent = "read more";
