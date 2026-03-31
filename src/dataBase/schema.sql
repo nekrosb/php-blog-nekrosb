@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
-    token TEXT,
+    role TEXT NOT NULL DEFAULT 'user',
     password TEXT NOT NULL
 );
 
@@ -26,3 +26,4 @@ create table if not exists comments (
     foreign key (post_id) references posts(id),
     foreign key (author_id) references users(id)
 );
+

@@ -27,14 +27,27 @@ class Database
         return self::$instance;
     }
 
+    public function ensureDBExists(): void
+    {
+        $stmt = $this->pdo->prepare(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='posts'"
+        );
+        $stmt->execute();
+
+        if (!$stmt->fetch()) {
+            $this->createDB();
+            $this->createUser("admin", "admin@gmail.com", "admin123", "admin");
+        }
+    }
+
     public function createDB(): void
     {
         $sqlFile = __DIR__ . "/../dataBase/schema.sql";
 
         $sql = file_get_contents($sqlFile);
-        $sqlCommand = explode(";", $sql);
+        $sqlCommands = explode(";", $sql);
 
-        foreach ($sqlCommand as $command) {
+        foreach ($sqlCommands as $command) {
             $trimmedCommand = trim($command);
             if (!empty($trimmedCommand)) {
                 $this->pdo->exec($trimmedCommand);
@@ -42,10 +55,51 @@ class Database
         }
     }
 
+    // --- Posts Management ---
+
+    public function getTotalNumberOfPosts(): int
+    {
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM posts");
+        $stmt->execute();
+        return (int)$stmt->fetchColumn();
+    }
+
+    public function getPosts(int $limit, int $offset): array
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT p.id, p.title, p.image, p.content, p.author_id, p.created_at, u.name,
+                   (SELECT COUNT(*) FROM comments c WHERE c.post_id = p.id) as comment_count
+            FROM posts p
+            JOIN users u ON p.author_id = u.id
+            ORDER BY created_at DESC
+            LIMIT :limit 
+            OFFSET :offset
+        ");
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getPostById(int $id): ?array
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT p.title, p.content, p.created_at, p.image, u.name 
+            FROM posts p 
+            JOIN users u ON p.author_id = u.id
+            WHERE p.id = :id
+        ");
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $post = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $post ?: null;
+    }
+
     public function createPost(string $title, string $content, ?string $imagePath, int $authorId): void
     {
-
-
         $stmt = $this->pdo->prepare("
             INSERT INTO posts (title, content, image, author_id)
             VALUES (:title, :content, :image, :author_id)
@@ -54,41 +108,9 @@ class Database
         $stmt->bindParam(':title', $title);
         $stmt->bindParam(':content', $content);
         $stmt->bindParam(':image', $imagePath);
-        $stmt->bindParam(':author_id', $authorId);
+        $stmt->bindParam(':author_id', $authorId, PDO::PARAM_INT);
 
         $stmt->execute();
-    }
-
-
-    public function ensureDBExists(): void
-    {
-
-        $result = $this->pdo->query(
-            "SELECT name FROM sqlite_master WHERE type='table' AND name='posts'"
-        );
-
-        if (!$result->fetch()) {
-
-            $this->createDB();
-        }
-    }
-    public function getTotalNumberOfPosts(): int
-    {
-        $stmt = $this->pdo->query("SELECT COUNT(*) FROM posts");
-        return (int)$stmt->fetchColumn();
-    }
-
-
-    public function getPosts($limit, $offset): array
-    {
-        $stmt = $this->pdo->query("SELECT p.id, p.title, p.image, p.content, p.author_id, p.created_at, u.name,
-        (SELECT COUNT(*) FROM comments c WHERE c.post_id = p.id) as comment_count
-        FROM posts p
-        JOIN users u ON p.author_id = u.id
-        ORDER BY created_at DESC
-        LIMIT $limit 
-        OFFSET $offset");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function updatePost(int $id, string $title, string $content, ?string $imagePath): void
@@ -107,46 +129,38 @@ class Database
         $stmt->execute();
     }
 
-    public function getPostById(int $id): ?array
-    {
-        $stmt = $this->pdo->prepare("SELECT  p.title, p.content, p.created_at, p.image, u.name FROM posts p 
-        join users u ON p.author_id = u.id
-        WHERE p.id = :id");
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-        $stmt->execute();
-
-        $post = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $post ?: null;
-    }
+    // --- Users Management ---
 
     public function checkMailExistsForRegistration(string $email): void
     {
         $stmt = $this->pdo->prepare("SELECT id FROM users WHERE email = :email");
         $stmt->bindParam(':email', $email, PDO::PARAM_STR);
         $stmt->execute();
+
         $existingUser = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($existingUser) {
             throw new Exception("Email already exists");
         }
     }
 
-    public function createUser(string $username, string $email, string $password): void
+    public function createUser(string $username, string $email, string $password, string $role = 'user'): void
     {
         $stmt = $this->pdo->prepare("
-            INSERT INTO users (name, email, password)
-            VALUES (:username, :email, :password)
+            INSERT INTO users (name, email, role, password)
+            VALUES (:username, :email, :role, :password)
         ");
 
         $stmt->bindParam(':username', $username);
         $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':role', $role);
         $stmt->bindValue(':password', password_hash($password, PASSWORD_DEFAULT));
 
         $stmt->execute();
     }
 
-    public function takeUser(string $email, string $password): int
+    public function takeUser(string $email, string $password): array // returns [id, role]
     {
-        $stmt = $this->pdo->prepare("SELECT id, password FROM users WHERE email = :email");
+        $stmt = $this->pdo->prepare("SELECT id, role, password FROM users WHERE email = :email");
         $stmt->bindParam(':email', $email, PDO::PARAM_STR);
         $stmt->execute();
 
@@ -156,21 +170,25 @@ class Database
             throw new Exception("Invalid email or password");
         }
 
-        return (int)$user['id'];
+        return [(int)$user['id'], $user['role']];
     }
+
+    // --- Comments Management ---
 
     public function getPostsComments(int $postId): array
     {
-        $stmt = $this->pdo->prepare("SELECT c.content, c.created_at, u.name FROM comments c
-        JOIN users u ON c.author_id = u.id
-        WHERE c.post_id = :postId
-        ORDER BY created_at DESC");
+        $stmt = $this->pdo->prepare("
+            SELECT c.content, c.created_at, u.name 
+            FROM comments c
+            JOIN users u ON c.author_id = u.id
+            WHERE c.post_id = :postId
+            ORDER BY created_at DESC
+        ");
         $stmt->bindParam(':postId', $postId, PDO::PARAM_INT);
         $stmt->execute();
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
 
     public function createComment(int $postId, int $authorId, string $content): void
     {

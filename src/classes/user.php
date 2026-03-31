@@ -27,6 +27,19 @@ class User
 
     public static function checkSession(): bool
     {
-        return isset($_SESSION["id"]);
+        return isset($_SESSION['id']);
+    }
+
+    public static function isAdmin(): bool
+    {
+        return isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+    }
+
+    public static function canEdit(int $authorId): bool
+    {
+        if (!self::checkSession()) {
+            return false;
+        }
+        return (int)$_SESSION['id'] === $authorId || self::isAdmin();
     }
 }

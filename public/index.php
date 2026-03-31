@@ -58,7 +58,7 @@ $posts = $db->getPosts($limit, $offset);
                 <button class="toggle-btn" aria-expanded="false" aria-controls="content-<?php echo $index; ?>">read more</button>
 
 
-                <?php if (User::checkSession() && (int)$post['author_id'] === (int)$_SESSION['id']): ?>
+                <?php if (User::canEdit((int)$post['author_id'])): ?>
                     <form action="/post-edition.php" method="GET">
                         <input type="hidden" name="id" value="<?php echo $post['id']; ?>">
                         <button type="submit">Edit Post</button>
