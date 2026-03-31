@@ -184,10 +184,21 @@ a:active {
     align-items: center;
 
     padding: 40px 20px;
-
 }
 
+.profile-container {
 
+    width: 100%;
+    min-width: 1150px;
+
+
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    margin: 40px auto 20px;
+
+}
 
 /* ===== POST ===== */
 

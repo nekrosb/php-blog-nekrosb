@@ -7,7 +7,7 @@ require_once __DIR__ . "/../src/classes/user.php";
 
         <ul>
             <?php if (User::checkSession()): ?>
-                <li><a href="/profile.php" class="login">Profile</a></li>
+                <li><a href="/edition-profile.php" class="login">Profile</a></li>
                 <li>
                     <form role="link" action="/logout.php" method="POST">
                         <button type="submit" onclick="return confirm('Are you sure you want to log out?');" class="login" role="link">log out</button>

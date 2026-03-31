@@ -173,6 +173,17 @@ class Database
         return [(int)$user['id'], $user['role']];
     }
 
+    public function getUserById(int $userId): ?array
+    {
+        $stmt = $this->pdo->prepare("SELECT name, email, password FROM users WHERE id = :userId");
+        $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $user;
+    }
+
     // --- Comments Management ---
 
     public function getPostsComments(int $postId): array
@@ -201,6 +212,31 @@ class Database
         $stmt->bindParam(':authorId', $authorId, PDO::PARAM_INT);
         $stmt->bindParam(':content', $content, PDO::PARAM_STR);
 
+        $stmt->execute();
+    }
+
+    public function changeName(int $userId, string $newName): void
+    {
+        $stmt = $this->pdo->prepare("UPDATE users SET name = :newName WHERE id = :userId");
+        $stmt->bindParam(':newName', $newName, PDO::PARAM_STR);
+        $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+
+    public function changeEmail(int $userId, string $newEmail): void
+    {
+        $stmt = $this->pdo->prepare("UPDATE users SET email = :newEmail WHERE id = :userId");
+        $stmt->bindParam(':newEmail', $newEmail, PDO::PARAM_STR);
+        $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+
+    public function 
+changePassword(int $userId, string $newPassword): void
+    {
+        $stmt = $this->pdo->prepare("UPDATE users SET password = :newPassword WHERE id = :userId");
+        $stmt->bindValue(':newPassword', password_hash($newPassword, PASSWORD_DEFAULT));
+        $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
         $stmt->execute();
     }
 }
