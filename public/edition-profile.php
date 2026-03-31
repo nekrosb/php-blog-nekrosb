@@ -1,5 +1,8 @@
 <?php
 session_start();
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
 require_once __DIR__ . "/../src/classes/working-with-db.php";
 require_once __DIR__ . "/../src/classes/user.php";
 
@@ -14,6 +17,12 @@ $userId = (int)$_SESSION['id'];
 $user = $db->getUserById($userId);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        $_SESSION['flash_msg'] = "Invalid CSRF token.";
+        header("Location: edition-profile.php");
+        exit();
+    }
+
     if (isset($_POST["name"])) {
         $newNameFromUser = filter_input(INPUT_POST, 'name');
         $newName = trim($newNameFromUser);
@@ -41,8 +50,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header("Location: edition-profile.php");
             exit();
         }
-        $db->changeEmail($userId, $newEmail);
-        $_SESSION['flash_msg'] = "Email updated successfully.";
+        try {
+            $db->changeEmail($userId, $newEmail);
+            $_SESSION['flash_msg'] = "Email updated successfully.";
+        } catch (Exception $e) {
+            $_SESSION['flash_msg'] = $e->getMessage();
+        }
         header("Location: edition-profile.php");
         exit();
     }
@@ -57,26 +70,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit();
         }
 
-        // Проверяем, совпадает ли введенный старый пароль с текущим
         if (!password_verify($oldPassword, $user['password'])) {
             $_SESSION['flash_msg'] = "Incorrect old password.";
             header("Location: edition-profile.php");
             exit();
         }
 
-        // Проверяем, что новый пароль отличается от старого
         if ($oldPassword === $newPassword) {
             $_SESSION['flash_msg'] = "New password cannot be the same as the old password.";
             header("Location: edition-profile.php");
             exit();
         }
 
-        // Валидация нового пароля через метод класса User и обновление 
         try {
             $userObj = new User();
-            $userObj->checkPassword($newPassword); // Проверяем на сложность
+            $userObj->checkPassword($newPassword);
 
-            $db->changePassword($userId, $newPassword); // Метод, который нужно добавить в Database
+            $db->changePassword($userId, $newPassword);
             $_SESSION['flash_msg'] = "Password updated successfully.";
         } catch (Exception $e) {
             $_SESSION['flash_msg'] = $e->getMessage();
@@ -100,6 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/style.css">
     <title>Profile Edition</title>
+</head>
 
 <body>
     <div class="post-container">
@@ -109,18 +120,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <p><?php echo htmlspecialchars($user['email']); ?></p>
 
             <form action="edition-profile.php" method="POST">
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                 <label for="name">Name:</label>
                 <input type="text" id="name" name="name" placeholder="new name" required>
                 <button type="submit">Save Changes</button>
             </form>
 
             <form action="edition-profile.php" method="POST">
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                 <label for="email">Email:</label>
                 <input type="email" id="email" name="email" placeholder="new email" required>
                 <button type="submit">Save Changes</button>
             </form>
 
             <form action="edition-profile.php" method="POST">
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                 <label for="old_password">Old Password:</label>
                 <input type="password" id="old_password" name="old_password" placeholder="old password" required>
                 <label for="password">New Password:</label>

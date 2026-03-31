@@ -1,11 +1,20 @@
 <?php
 session_start();
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
 
 require_once __DIR__ . "/../src/classes/working-with-db.php";
 
 $db = Database::getInstance();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        $_SESSION['flash_msg'] = "Invalid CSRF token.";
+        header("Location: /login.php");
+        exit();
+    }
+
     $emailField = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
     $email = trim($emailField);
     $passwordField = filter_input(INPUT_POST, 'password');
@@ -53,6 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="menu-container">
         <?php include "flashMsg.php" ?>
         <form action="" method="POST">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
             <label for="email">email:</label>
             <input type="email" id="email" name="email" required>
 

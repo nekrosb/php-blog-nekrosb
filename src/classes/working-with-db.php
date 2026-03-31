@@ -181,7 +181,7 @@ class Database
 
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        return $user;
+        return $user ?: null;
     }
 
     // --- Comments Management ---
@@ -225,14 +225,15 @@ class Database
 
     public function changeEmail(int $userId, string $newEmail): void
     {
+        $this->checkMailExistsForRegistration($newEmail);
         $stmt = $this->pdo->prepare("UPDATE users SET email = :newEmail WHERE id = :userId");
         $stmt->bindParam(':newEmail', $newEmail, PDO::PARAM_STR);
         $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
         $stmt->execute();
     }
 
-    public function 
-changePassword(int $userId, string $newPassword): void
+    public function
+    changePassword(int $userId, string $newPassword): void
     {
         $stmt = $this->pdo->prepare("UPDATE users SET password = :newPassword WHERE id = :userId");
         $stmt->bindValue(':newPassword', password_hash($newPassword, PASSWORD_DEFAULT));

@@ -1,5 +1,8 @@
 <?php
 session_start();
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
 
 require_once __DIR__ . "/../src/classes/working-with-db.php";
 require_once __DIR__ . "/../src/classes/user.php";
@@ -7,6 +10,12 @@ $db = Database::getInstance();
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        $_SESSION['flash_msg'] = "Invalid CSRF token.";
+        header("Location: register.php");
+        exit();
+    }
+
     $usernameField = filter_input(INPUT_POST, "username");
     $emailField = filter_input(INPUT_POST, "email", FILTER_VALIDATE_EMAIL);
     $passwordField = filter_input(INPUT_POST, "password");
@@ -55,6 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php include "flashMsg.php" ?>
 
         <form action="" method="POST">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required>
 

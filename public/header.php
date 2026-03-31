@@ -10,6 +10,7 @@ require_once __DIR__ . "/../src/classes/user.php";
                 <li><a href="/edition-profile.php" class="login">Profile</a></li>
                 <li>
                     <form role="link" action="/logout.php" method="POST">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                         <button type="submit" onclick="return confirm('Are you sure you want to log out?');" class="login" role="link">log out</button>
                     </form>
                 </li>

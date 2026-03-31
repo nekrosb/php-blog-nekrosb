@@ -1,5 +1,8 @@
 <?php
 session_start();
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
 require_once __DIR__ . "/../src/classes/upload-and-load-file.php";
 require_once __DIR__ . "/../src/classes/working-with-db.php";
 require_once __DIR__ . "/../src/classes/user.php";
@@ -13,6 +16,12 @@ $db = Database::getInstance();
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        $_SESSION['flash_msg'] = "Invalid CSRF token.";
+        header("Location: /create-post.php");
+        exit();
+    }
+
     $id  = $_SESSION["id"];
     $titleField = filter_input(INPUT_POST, 'title');
     $title = trim($titleField);
@@ -64,6 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="menu-container">
         <?php include "flashMsg.php" ?>
         <form action="" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
             <label for="title">Title:</label>
             <input type="text" id="title" name="title" required>
 
