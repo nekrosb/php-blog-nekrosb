@@ -82,7 +82,7 @@ $posts = $db->getPosts($limit, $offset);
 
                     // Reliably check if content overflows the clamped 3 lines
                     // Momentarily remove the max-height and clamp to get true height
-                    const originalMaxHeight = content.style.maxHeight;
+
                     content.classList.add("open");
                     const fullHeight = content.scrollHeight;
                     content.classList.remove("open");

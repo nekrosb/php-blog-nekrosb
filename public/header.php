@@ -6,6 +6,7 @@ require_once __DIR__ . "/../src/classes/user.php";
     <nav>
 
         <ul>
+            <li><a href="index.php" class="login">home</a></li>
             <?php if (User::checkSession()): ?>
                 <li><a href="/edition-profile.php" class="login">Profile</a></li>
                 <li>

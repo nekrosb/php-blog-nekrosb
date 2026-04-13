@@ -113,6 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body>
+    <?php include "header.php"; ?>
     <div class="post-container">
         <div class="post">
             <?php include "flashMsg.php" ?>
@@ -122,14 +123,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <form action="edition-profile.php" method="POST">
                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                 <label for="name">Name:</label>
-                <input type="text" id="name" name="name" placeholder="new name" required>
+                <input type="text" id="name" name="name" placeholder="new name" value="<?php echo htmlspecialchars($user['name']); ?>" required>
                 <button type="submit">Save Changes</button>
             </form>
 
             <form action="edition-profile.php" method="POST">
                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                 <label for="email">Email:</label>
-                <input type="email" id="email" name="email" placeholder="new email" required>
+                <input type="email" id="email" name="email" placeholder="new email" value="<?php echo htmlspecialchars($user['email']); ?>" required>
                 <button type="submit">Save Changes</button>
             </form>
 
