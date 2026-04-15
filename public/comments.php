@@ -61,6 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="post-container">
         <div class="post">
             <h1><?php echo htmlspecialchars($post['title']); ?></h1>
+            <small class="category-label">Category: <?php echo htmlspecialchars($post['category_name']); ?></small>
             <hr>
             <strong><?php echo htmlspecialchars($post['name']); ?></strong>
             <p>create at <?php echo htmlspecialchars($post['created_at']); ?></p>
