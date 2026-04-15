@@ -1,11 +1,9 @@
 <?php
 session_start();
+require_once __DIR__ . '/../src/classes/csrf.php';
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-        header("Location: /");
-        exit();
-    }
+    Csrf::validateToken("/");
 
     $_SESSION = [];
     if (ini_get("session.use_cookies")) {

@@ -1,29 +1,21 @@
 <?php
 session_start();
-if (empty($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-}
+require_once __DIR__ . '/../src/classes/csrf.php';
+Csrf::generateToken();
 require_once __DIR__ . "/../src/classes/working-with-db.php";
 require_once __DIR__ . "/../src/classes/user.php";
 
-if (!User::checkSession()) {
-    $_SESSION['flash_msg'] = "You must be logged in to access this page.";
-    header("Location: /");
-    exit();
-}
+User::requireLogin();
 
 $db = Database::getInstance();
 $userId = (int)$_SESSION['id'];
 $user = $db->getUserById($userId);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-        $_SESSION['flash_msg'] = "Invalid CSRF token.";
-        header("Location: edition-profile.php");
-        exit();
-    }
+    Csrf::validateToken("edition-profile.php");
 
     if (isset($_POST["name"])) {
+
         $newNameFromUser = filter_input(INPUT_POST, 'name');
         $newName = trim($newNameFromUser);
         if (empty($newName)) {

@@ -25,9 +25,18 @@ class User
         }
     }
 
-    public static function checkSession(): bool
+    public static function isLoggedIn(): bool
     {
         return isset($_SESSION['id']);
+    }
+
+    public static function requireLogin(string $redirectPath = '/', string $flashMsg = "You must be logged in to access this page."): void
+    {
+        if (!self::isLoggedIn()) {
+            $_SESSION['flash_msg'] = $flashMsg;
+            header("Location: $redirectPath");
+            exit();
+        }
     }
 
     public static function isAdmin(): bool
@@ -37,7 +46,7 @@ class User
 
     public static function canEdit(int $authorId): bool
     {
-        if (!self::checkSession()) {
+        if (!self::isLoggedIn()) {
             return false;
         }
         return (int)$_SESSION['id'] === $authorId || self::isAdmin();

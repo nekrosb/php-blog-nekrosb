@@ -1,8 +1,7 @@
 <?php
 session_start();
-if (empty($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-}
+require_once __DIR__ . '/../src/classes/csrf.php';
+Csrf::generateToken();
 
 require_once __DIR__ . "/../src/classes/working-with-db.php";
 require_once __DIR__ . "/../src/classes/user.php";
@@ -10,11 +9,7 @@ $db = Database::getInstance();
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-        $_SESSION['flash_msg'] = "Invalid CSRF token.";
-        header("Location: register.php");
-        exit();
-    }
+    Csrf::validateToken("register.php");
 
     $usernameField = filter_input(INPUT_POST, "username");
     $emailField = filter_input(INPUT_POST, "email", FILTER_VALIDATE_EMAIL);

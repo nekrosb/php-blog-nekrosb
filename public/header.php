@@ -7,7 +7,7 @@ require_once __DIR__ . "/../src/classes/user.php";
 
         <ul>
             <li><a href="index.php" class="login">home</a></li>
-            <?php if (User::checkSession()): ?>
+            <?php if (User::isLoggedIn()): ?>
                 <li><a href="/edition-profile.php" class="login">Profile</a></li>
                 <li>
                     <form role="link" action="/logout.php" method="POST">
