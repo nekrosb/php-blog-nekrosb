@@ -28,10 +28,7 @@ body {
     min-height: 100vh;
 }
 
-h1,
-h2,
-h3,
-h4 {
+h1, h2, h3, h4 {
     color: var(--text-main);
     margin-top: 0;
     font-weight: 700;
@@ -84,13 +81,13 @@ nav ul {
     list-style: none;
 }
 
-body>nav>ul {
+body > nav > ul {
     justify-content: center;
     margin: 2rem 0;
 }
 
-body>nav>ul li a,
-body>nav>ul li strong {
+body > nav > ul li a,
+body > nav > ul li strong {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -104,13 +101,13 @@ body>nav>ul li strong {
     text-decoration: none;
 }
 
-body>nav>ul li strong {
+body > nav > ul li strong {
     background: var(--primary-color);
     color: white;
     border-color: var(--primary-color);
 }
 
-body>nav>ul li a:hover {
+body > nav > ul li a:hover {
     background: var(--bg-color);
     text-decoration: none;
 }
@@ -119,8 +116,8 @@ body>nav>ul li a:hover {
 button,
 a.login,
 a.register,
-form>button[type="submit"],
-.post form>button {
+form > button[type="submit"],
+.post form > button {
     display: inline-block;
     background-color: var(--card-bg);
     border: 1px solid var(--border-color);
@@ -140,8 +137,8 @@ form>button[type="submit"],
 button:hover,
 a.login:hover,
 a.register:hover,
-form>button[type="submit"]:hover,
-.post form>button:hover {
+form > button[type="submit"]:hover,
+.post form > button:hover {
     background-color: var(--bg-color);
     border-color: #d1d5db;
     text-decoration: none;
@@ -154,14 +151,14 @@ a.register:active {
     box-shadow: none;
 }
 
-form>button[type="submit"],
+form > button[type="submit"],
 a.register {
     background-color: var(--primary-color);
     color: white;
     border-color: var(--primary-color);
 }
 
-form>button[type="submit"]:hover,
+form > button[type="submit"]:hover,
 a.register:hover {
     background-color: var(--primary-hover);
     color: white;
@@ -233,16 +230,14 @@ header form {
     transform: translateY(-2px);
 }
 
-.post h1,
-.post h2 {
+.post h1, .post h2 {
     font-size: 1.75rem;
     margin-bottom: 0.5rem;
     color: var(--text-main);
     line-height: 1.3;
 }
 
-.post>p,
-.post>strong {
+.post > p, .post > strong {
     color: var(--text-muted);
     font-size: 0.9rem;
     margin-top: 0;
@@ -271,7 +266,7 @@ header form {
     font-size: 1rem;
     line-height: 1.6;
     padding: 0;
-    transition: max-height 0.35s ease-in-out;
+    transition: height 0.35s ease;
 }
 
 /* Clamp content only if it has a toggle button in the DOM near it */
@@ -279,12 +274,13 @@ header form {
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 3;
+    line-clamp: 3;
     -webkit-box-orient: vertical;
-    max-height: 4.8rem;
 }
 
 .content.open {
     -webkit-line-clamp: unset !important;
+    line-clamp: unset !important;
 }
 
 .toggle-btn {
@@ -416,7 +412,7 @@ button[type="reset"]:hover {
     margin: 0.25rem 0 0.75rem 0;
 }
 
-.post-container>form {
+.post-container > form {
     margin-top: 2rem;
     background: var(--card-bg);
     padding: 1.5rem;
@@ -451,9 +447,7 @@ footer {
         justify-content: center;
     }
 
-    .post-container,
-    .profile-container,
-    .menu-container {
+    .post-container, .profile-container, .menu-container {
         padding: 1.5rem 1rem;
         border-radius: 0;
         border-left: none;

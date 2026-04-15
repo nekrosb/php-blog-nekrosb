@@ -1,18 +1,18 @@
 <?php
 session_start();
+require_once __DIR__ . '/../src/classes/csrf.php';
+Csrf::generateToken();
 require_once __DIR__ . "/../src/classes/upload-and-load-file.php";
 require_once __DIR__ . "/../src/classes/working-with-db.php";
 require_once __DIR__ . "/../src/classes/user.php";
-if (!User::checkSession()) {
-    $_SESSION["flash_msg"] = "You must be logged in to edit a post";
-    header("Location: /login.php");
-    exit();
-}
+User::requireLogin('/login.php', 'You must be logged in to edit a post');
 
 $db = Database::getInstance();
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    Csrf::validateToken("/create-post.php");
+
     $id  = $_SESSION["id"];
     $titleField = filter_input(INPUT_POST, 'title');
     $title = trim($titleField);
@@ -64,6 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="menu-container">
         <?php include "flashMsg.php" ?>
         <form action="" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
             <label for="title">Title:</label>
             <input type="text" id="title" name="title" required>
 

@@ -1,5 +1,7 @@
 <?php
 session_start();
+require_once __DIR__ . '/../src/classes/csrf.php';
+Csrf::generateToken();
 require_once "../src/classes/working-with-db.php";
 $db = Database::getInstance();
 
@@ -20,6 +22,8 @@ if (!$post) {
 $comments = $db->getPostsComments($postId);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    Csrf::validateToken("comments.php?id=" . $postId);
+
     if (!isset($_SESSION['id'])) {
         $_SESSION['flash_message'] = "You must be logged in to post a comment.";
         header("Location: login.php");
@@ -72,6 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <?php if (isset($_SESSION['id'])): ?>
             <form action="comments.php?id=<?php echo $postId; ?>" method="POST">
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                 <input type="hidden" name="post_id" value="<?php echo $postId; ?>">
                 <textarea name="content" placeholder="Write a comment..." required></textarea>
                 <button type="submit">Post Comment</button>
