@@ -21,6 +21,7 @@ if ($id) {
         $content = $post['content'];
         $path = $post['image'];
         $authorId = $post['author_id'];
+        $currentCategoryId = $post['category_id'];
     } else {
         $_SESSION["flash_msg"] = "Post not found";
         header("Location: /");
@@ -45,9 +46,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = trim($titleField);
     $contentField = filter_input(INPUT_POST, 'content');
     $content = trim($contentField);
+    $categoryId = filter_input(INPUT_POST, 'category', FILTER_VALIDATE_INT);
 
-    if (empty($title) || empty($content)) {
-        $_SESSION["flash_msg"] = "title and content are required";
+    if (empty($title) || empty($content) || !$categoryId) {
+        $_SESSION["flash_msg"] = "title, content and category are required";
         header("location: /post-edition.php?id=" . $id);
         exit();
     }
@@ -70,11 +72,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
 
-    $db->updatePost($id, $title, $content, $path);
+    $db->updatePost($id, $title, $content, $path, $categoryId);
     $_SESSION["flash_msg"] = "Post updated successfully";
     header("Location: /");
     exit();
 }
+
+$categories = $db->getAllCategorys();
 
 ?>
 
@@ -105,6 +109,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <label for="content">Content:</label>
             <textarea id="content" name="content" required><?php echo htmlspecialchars($content); ?></textarea>
+
+            <label for="category">Category:</label>
+            <select id="category" name="category" required>
+                <option value="">Select a category</option>
+                <?php foreach ($categories as $category): ?>
+                    <option value="<?= htmlspecialchars($category['id']) ?>" <?= ($category['id'] == $currentCategoryId) ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($category['name']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+
             <label for="upload-file">Upload your file</label>
             <input type="file" id="upload-file" name="image">
             <button type="submit">edit Post</button>

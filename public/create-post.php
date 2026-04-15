@@ -18,10 +18,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = trim($titleField);
     $contentField = filter_input(INPUT_POST, 'content');
     $content = trim($contentField);
+    $categoryId = filter_input(INPUT_POST, 'category', FILTER_VALIDATE_INT);
     $path = null;
 
-    if (empty($title) || empty($content)) {
-        $_SESSION["flash_msg"] = "title and content are required";
+    if (empty($title) || empty($content) || !$categoryId) {
+        $_SESSION["flash_msg"] = "title, content and category are required";
         header("location: /create-post.php");
         exit();
     }
@@ -39,11 +40,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
 
-    $db->createPost($title, $content, $path, $id);
+    $db->createPost($title, $content, $path, $id, $categoryId);
     $_SESSION["flash_msg"] = "Post created successfully";
     header("Location: /");
     exit();
 }
+
+$categories = $db->getAllCategorys();
 
 ?>
 
@@ -70,6 +73,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <label for="content">Content:</label>
             <textarea id="content" name="content" required></textarea>
+
+            <label for="category">Category:</label>
+            <select id="category" name="category" required>
+                <option value="">Select a category</option>
+                <?php foreach ($categories as $category): ?>
+                    <option value="<?= htmlspecialchars($category['id']) ?>">
+                        <?= htmlspecialchars($category['name']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+
             <label for="upload-file">Upload your file</label>
             <input type="file" id="upload-file" name="image">
             <button type="submit">Create Post</button>

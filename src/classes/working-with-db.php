@@ -36,7 +36,7 @@ class Database
 
         if (!$stmt->fetch()) {
             $this->createDB();
-            $this->createUser("admin", "admin@gmail.com", "admin123", "admin");
+            $this->createUser("admin", "admin@gmail.com", "Admin123@", "admin");
         }
     }
 
@@ -67,10 +67,11 @@ class Database
     public function getPosts(int $limit, int $offset): array
     {
         $stmt = $this->pdo->prepare("
-            SELECT p.id, p.title, p.image, p.content, p.author_id, p.created_at, u.name,
+            SELECT p.id, p.title, p.image, p.content, p.author_id, p.created_at, p.category_id, u.name, c.name as category_name,
                    (SELECT COUNT(*) FROM comments c WHERE c.post_id = p.id) as comment_count
             FROM posts p
             JOIN users u ON p.author_id = u.id
+            join categorys c on p.category_id = c.id
             ORDER BY created_at DESC
             LIMIT :limit 
             OFFSET :offset
@@ -85,9 +86,10 @@ class Database
     public function getPostById(int $id): ?array
     {
         $stmt = $this->pdo->prepare("
-            SELECT p.title, p.content, p.created_at, p.image, u.name 
+            SELECT p.title, p.content, p.created_at, p.image, p.category_id, p.author_id, u.name, c.name as category_name
             FROM posts p 
             JOIN users u ON p.author_id = u.id
+            join categorys c on p.category_id = c.id
             WHERE p.id = :id
         ");
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
@@ -98,32 +100,34 @@ class Database
         return $post ?: null;
     }
 
-    public function createPost(string $title, string $content, ?string $imagePath, int $authorId): void
+    public function createPost(string $title, string $content, ?string $imagePath, int $authorId, int $categoryId): void
     {
         $stmt = $this->pdo->prepare("
-            INSERT INTO posts (title, content, image, author_id)
-            VALUES (:title, :content, :image, :author_id)
+            INSERT INTO posts (title, content, image, author_id, category_id)
+            VALUES (:title, :content, :image, :author_id, :category_id)
         ");
 
         $stmt->bindParam(':title', $title);
         $stmt->bindParam(':content', $content);
         $stmt->bindParam(':image', $imagePath);
         $stmt->bindParam(':author_id', $authorId, PDO::PARAM_INT);
+        $stmt->bindParam(':category_id', $categoryId, PDO::PARAM_INT);
 
         $stmt->execute();
     }
 
-    public function updatePost(int $id, string $title, string $content, ?string $imagePath): void
+    public function updatePost(int $id, string $title, string $content, ?string $imagePath, int $categoryId): void
     {
         $stmt = $this->pdo->prepare("
             UPDATE posts
-            SET title = :title, content = :content, image = :image
+            SET title = :title, content = :content, image = :image, category_id = :category_id
             WHERE id = :id
         ");
 
         $stmt->bindParam(':title', $title, PDO::PARAM_STR);
         $stmt->bindParam(':content', $content, PDO::PARAM_STR);
         $stmt->bindParam(':image', $imagePath, PDO::PARAM_STR);
+        $stmt->bindParam(':category_id', $categoryId, PDO::PARAM_INT);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 
         $stmt->execute();
@@ -239,5 +243,14 @@ class Database
         $stmt->bindValue(':newPassword', password_hash($newPassword, PASSWORD_DEFAULT));
         $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
         $stmt->execute();
+    }
+
+    public
+    function getAllCategorys(): array
+    {
+        $stmt = $this->pdo->prepare("SELECT id, name FROM categorys");
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
