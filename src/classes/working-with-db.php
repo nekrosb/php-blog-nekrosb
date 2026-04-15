@@ -67,11 +67,11 @@ class Database
     public function getPosts(int $limit, int $offset): array
     {
         $stmt = $this->pdo->prepare("
-            SELECT p.id, p.title, p.image, p.content, p.author_id, p.created_at, p.category_id, u.name, c.name as category_name,
+            SELECT p.id, p.title, p.image, p.content, p.author_id, p.created_at, p.category_id, u.name, cat.name as category_name,
                    (SELECT COUNT(*) FROM comments c WHERE c.post_id = p.id) as comment_count
             FROM posts p
             JOIN users u ON p.author_id = u.id
-            join categories c on p.category_id = c.id
+            LEFT JOIN categories cat on p.category_id = cat.id
             ORDER BY created_at DESC
             LIMIT :limit 
             OFFSET :offset
@@ -86,10 +86,10 @@ class Database
     public function getPostById(int $id): ?array
     {
         $stmt = $this->pdo->prepare("
-            SELECT p.title, p.content, p.created_at, p.image, p.category_id, p.author_id, u.name, c.name as category_name
+            SELECT p.title, p.content, p.created_at, p.image, p.category_id, p.author_id, u.name, cat.name as category_name
             FROM posts p 
             JOIN users u ON p.author_id = u.id
-            join categories c on p.category_id = c.id
+            LEFT JOIN categories cat on p.category_id = cat.id
             WHERE p.id = :id
         ");
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
@@ -100,7 +100,7 @@ class Database
         return $post ?: null;
     }
 
-    public function createPost(string $title, string $content, ?string $imagePath, int $authorId, int $categoryId): void
+    public function createPost(string $title, string $content, ?string $imagePath, int $authorId, ?int $categoryId): void
     {
         $stmt = $this->pdo->prepare("
             INSERT INTO posts (title, content, image, author_id, category_id)
@@ -116,7 +116,7 @@ class Database
         $stmt->execute();
     }
 
-    public function updatePost(int $id, string $title, string $content, ?string $imagePath, int $categoryId): void
+    public function updatePost(int $id, string $title, string $content, ?string $imagePath, ?int $categoryId): void
     {
         $stmt = $this->pdo->prepare("
             UPDATE posts

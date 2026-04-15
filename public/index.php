@@ -45,7 +45,9 @@ $posts = $db->getPosts($limit, $offset);
             <div class="post">
 
                 <h2><?php echo htmlspecialchars($post['title']); ?></h2>
-                <small class="category-label">Category: <?php echo htmlspecialchars($post['category_name']); ?></small>
+                <?php if (!empty($post['category_name'])): ?>
+                    <small class="category-label">Category: <?php echo htmlspecialchars($post['category_name']); ?></small>
+                <?php endif; ?>
                 <p>by <?php echo htmlspecialchars($post['name']); ?></p>
                 <p>create at <?php echo htmlspecialchars($post['created_at']); ?></p>
 

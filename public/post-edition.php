@@ -46,10 +46,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = trim($titleField);
     $contentField = filter_input(INPUT_POST, 'content');
     $content = trim($contentField);
-    $categoryId = filter_input(INPUT_POST, 'category', FILTER_VALIDATE_INT);
+    $categoryId = filter_input(INPUT_POST, 'category', FILTER_VALIDATE_INT) ?: null;
 
-    if (empty($title) || empty($content) || !$categoryId) {
-        $_SESSION["flash_msg"] = "title, content and category are required";
+    if (empty($title) || empty($content)) {
+        $_SESSION["flash_msg"] = "Title and content are required";
         header("location: /post-edition.php?id=" . $id);
         exit();
     }
@@ -111,8 +111,8 @@ $categories = $db->getAllCategories();
             <textarea id="content" name="content" required><?php echo htmlspecialchars($content); ?></textarea>
 
             <label for="category">Category:</label>
-            <select id="category" name="category" required>
-                <option value="">Select a category</option>
+            <select id="category" name="category">
+                <option value="">Select a category (optional)</option>
                 <?php foreach ($categories as $category): ?>
                     <option value="<?= htmlspecialchars($category['id']) ?>" <?= ($category['id'] == $currentCategoryId) ? 'selected' : '' ?>>
                         <?= htmlspecialchars($category['name']) ?>
