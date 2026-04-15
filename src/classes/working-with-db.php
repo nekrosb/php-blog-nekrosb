@@ -71,7 +71,7 @@ class Database
                    (SELECT COUNT(*) FROM comments c WHERE c.post_id = p.id) as comment_count
             FROM posts p
             JOIN users u ON p.author_id = u.id
-            join categorys c on p.category_id = c.id
+            join categories c on p.category_id = c.id
             ORDER BY created_at DESC
             LIMIT :limit 
             OFFSET :offset
@@ -89,7 +89,7 @@ class Database
             SELECT p.title, p.content, p.created_at, p.image, p.category_id, p.author_id, u.name, c.name as category_name
             FROM posts p 
             JOIN users u ON p.author_id = u.id
-            join categorys c on p.category_id = c.id
+            join categories c on p.category_id = c.id
             WHERE p.id = :id
         ");
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
@@ -246,9 +246,9 @@ class Database
     }
 
     public
-    function getAllCategorys(): array
+    function getAllCategories(): array
     {
-        $stmt = $this->pdo->prepare("SELECT id, name FROM categorys");
+        $stmt = $this->pdo->prepare("SELECT id, name FROM categories");
         $stmt->execute();
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

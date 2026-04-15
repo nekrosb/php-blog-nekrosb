@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit();
 }
 
-$categories = $db->getAllCategorys();
+$categories = $db->getAllCategories();
 
 ?>
 
